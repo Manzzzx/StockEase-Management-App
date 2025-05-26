@@ -22,25 +22,32 @@ Partial Class FR_MENU
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         MenuStrip1 = New MenuStrip()
         FileToolStripMenuItem = New ToolStripMenuItem()
         mnLogout = New ToolStripMenuItem()
         mnExit = New ToolStripMenuItem()
         DatabaseToolStripMenuItem = New ToolStripMenuItem()
+        mnKaryawan = New ToolStripMenuItem()
+        mnBarang = New ToolStripMenuItem()
         TransaksiToolStripMenuItem = New ToolStripMenuItem()
-        LaporanToolStripMenuItem = New ToolStripMenuItem()
-        TentangToolStripMenuItem = New ToolStripMenuItem()
-        DataKaryawanToolStripMenuItem = New ToolStripMenuItem()
-        DataBarangToolStripMenuItem = New ToolStripMenuItem()
-        BarangMasukToolStripMenuItem = New ToolStripMenuItem()
-        BarangKeluarToolStripMenuItem = New ToolStripMenuItem()
+        mnBarangMasuk = New ToolStripMenuItem()
+        mnBarangKeluar = New ToolStripMenuItem()
+        mnLaporan = New ToolStripMenuItem()
+        mnTentang = New ToolStripMenuItem()
+        ToolStrip1 = New ToolStrip()
+        txtTanggal = New ToolStripLabel()
+        ToolStripSeparator2 = New ToolStripSeparator()
+        txtWaktu = New ToolStripLabel()
+        WAKTU = New Timer(components)
         MenuStrip1.SuspendLayout()
+        ToolStrip1.SuspendLayout()
         SuspendLayout()
         ' 
         ' MenuStrip1
         ' 
         MenuStrip1.ImageScalingSize = New Size(32, 32)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {FileToolStripMenuItem, DatabaseToolStripMenuItem, TransaksiToolStripMenuItem, LaporanToolStripMenuItem, TentangToolStripMenuItem})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {FileToolStripMenuItem, DatabaseToolStripMenuItem, TransaksiToolStripMenuItem, mnLaporan, mnTentang})
         MenuStrip1.Location = New Point(0, 0)
         MenuStrip1.Name = "MenuStrip1"
         MenuStrip1.Size = New Size(800, 40)
@@ -57,78 +64,112 @@ Partial Class FR_MENU
         ' mnLogout
         ' 
         mnLogout.Name = "mnLogout"
-        mnLogout.Size = New Size(359, 44)
+        mnLogout.Size = New Size(222, 44)
         mnLogout.Text = "Logout"
         ' 
         ' mnExit
         ' 
         mnExit.Name = "mnExit"
-        mnExit.Size = New Size(359, 44)
+        mnExit.Size = New Size(222, 44)
         mnExit.Text = "Exit"
         ' 
         ' DatabaseToolStripMenuItem
         ' 
-        DatabaseToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {DataKaryawanToolStripMenuItem, DataBarangToolStripMenuItem})
+        DatabaseToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnKaryawan, mnBarang})
         DatabaseToolStripMenuItem.Name = "DatabaseToolStripMenuItem"
-        DatabaseToolStripMenuItem.Size = New Size(132, 38)
+        DatabaseToolStripMenuItem.Size = New Size(132, 36)
         DatabaseToolStripMenuItem.Text = "Database"
+        ' 
+        ' mnKaryawan
+        ' 
+        mnKaryawan.Name = "mnKaryawan"
+        mnKaryawan.Size = New Size(304, 44)
+        mnKaryawan.Text = "Data Karyawan"
+        ' 
+        ' mnBarang
+        ' 
+        mnBarang.Name = "mnBarang"
+        mnBarang.Size = New Size(304, 44)
+        mnBarang.Text = "Data Barang"
         ' 
         ' TransaksiToolStripMenuItem
         ' 
-        TransaksiToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BarangMasukToolStripMenuItem, BarangKeluarToolStripMenuItem})
+        TransaksiToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnBarangMasuk, mnBarangKeluar})
         TransaksiToolStripMenuItem.Name = "TransaksiToolStripMenuItem"
-        TransaksiToolStripMenuItem.Size = New Size(129, 38)
+        TransaksiToolStripMenuItem.Size = New Size(129, 36)
         TransaksiToolStripMenuItem.Text = "Transaksi"
         ' 
-        ' LaporanToolStripMenuItem
+        ' mnBarangMasuk
         ' 
-        LaporanToolStripMenuItem.Name = "LaporanToolStripMenuItem"
-        LaporanToolStripMenuItem.Size = New Size(119, 38)
-        LaporanToolStripMenuItem.Text = "Laporan"
+        mnBarangMasuk.Name = "mnBarangMasuk"
+        mnBarangMasuk.Size = New Size(298, 44)
+        mnBarangMasuk.Text = "Barang Masuk"
         ' 
-        ' TentangToolStripMenuItem
+        ' mnBarangKeluar
         ' 
-        TentangToolStripMenuItem.Name = "TentangToolStripMenuItem"
-        TentangToolStripMenuItem.Size = New Size(120, 38)
-        TentangToolStripMenuItem.Text = "Tentang"
+        mnBarangKeluar.Name = "mnBarangKeluar"
+        mnBarangKeluar.Size = New Size(298, 44)
+        mnBarangKeluar.Text = "Barang Keluar"
         ' 
-        ' DataKaryawanToolStripMenuItem
+        ' mnLaporan
         ' 
-        DataKaryawanToolStripMenuItem.Name = "DataKaryawanToolStripMenuItem"
-        DataKaryawanToolStripMenuItem.Size = New Size(359, 44)
-        DataKaryawanToolStripMenuItem.Text = "Data Karyawan"
+        mnLaporan.Name = "mnLaporan"
+        mnLaporan.Size = New Size(119, 36)
+        mnLaporan.Text = "Laporan"
         ' 
-        ' DataBarangToolStripMenuItem
+        ' mnTentang
         ' 
-        DataBarangToolStripMenuItem.Name = "DataBarangToolStripMenuItem"
-        DataBarangToolStripMenuItem.Size = New Size(359, 44)
-        DataBarangToolStripMenuItem.Text = "Data Barang"
+        mnTentang.Name = "mnTentang"
+        mnTentang.Size = New Size(120, 36)
+        mnTentang.Text = "Tentang"
         ' 
-        ' BarangMasukToolStripMenuItem
+        ' ToolStrip1
         ' 
-        BarangMasukToolStripMenuItem.Name = "BarangMasukToolStripMenuItem"
-        BarangMasukToolStripMenuItem.Size = New Size(359, 44)
-        BarangMasukToolStripMenuItem.Text = "Barang Masuk"
+        ToolStrip1.ImageScalingSize = New Size(32, 32)
+        ToolStrip1.Items.AddRange(New ToolStripItem() {txtTanggal, ToolStripSeparator2, txtWaktu})
+        ToolStrip1.Location = New Point(0, 40)
+        ToolStrip1.Name = "ToolStrip1"
+        ToolStrip1.Size = New Size(800, 38)
+        ToolStrip1.TabIndex = 3
+        ToolStrip1.Text = "ToolStrip1"
         ' 
-        ' BarangKeluarToolStripMenuItem
+        ' txtTanggal
         ' 
-        BarangKeluarToolStripMenuItem.Name = "BarangKeluarToolStripMenuItem"
-        BarangKeluarToolStripMenuItem.Size = New Size(359, 44)
-        BarangKeluarToolStripMenuItem.Text = "Barang Keluar"
+        txtTanggal.Name = "txtTanggal"
+        txtTanggal.Size = New Size(116, 32)
+        txtTanggal.Text = "TANGGAL"
         ' 
-        ' formMenu
+        ' ToolStripSeparator2
+        ' 
+        ToolStripSeparator2.Name = "ToolStripSeparator2"
+        ToolStripSeparator2.Size = New Size(6, 38)
+        ' 
+        ' txtWaktu
+        ' 
+        txtWaktu.Name = "txtWaktu"
+        txtWaktu.Size = New Size(59, 32)
+        txtWaktu.Text = "JAM"
+        ' 
+        ' WAKTU
+        ' 
+        ' 
+        ' FR_MENU
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
+        Controls.Add(ToolStrip1)
         Controls.Add(MenuStrip1)
+        FormBorderStyle = FormBorderStyle.None
         IsMdiContainer = True
         MainMenuStrip = MenuStrip1
-        Name = "formMenu"
+        Name = "FR_MENU"
         Text = "Menu"
         WindowState = FormWindowState.Maximized
         MenuStrip1.ResumeLayout(False)
         MenuStrip1.PerformLayout()
+        ToolStrip1.ResumeLayout(False)
+        ToolStrip1.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -138,12 +179,17 @@ Partial Class FR_MENU
     Friend WithEvents mnLogout As ToolStripMenuItem
     Friend WithEvents mnExit As ToolStripMenuItem
     Friend WithEvents DatabaseToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents DataKaryawanToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents DataBarangToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnKaryawan As ToolStripMenuItem
+    Friend WithEvents mnBarang As ToolStripMenuItem
     Friend WithEvents TransaksiToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents BarangMasukToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents BarangKeluarToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents LaporanToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents TentangToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnBarangMasuk As ToolStripMenuItem
+    Friend WithEvents mnBarangKeluar As ToolStripMenuItem
+    Friend WithEvents mnLaporan As ToolStripMenuItem
+    Friend WithEvents mnTentang As ToolStripMenuItem
+    Friend WithEvents ToolStrip1 As ToolStrip
+    Friend WithEvents txtTanggal As ToolStripLabel
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents txtWaktu As ToolStripLabel
+    Friend WithEvents WAKTU As Timer
 
 End Class

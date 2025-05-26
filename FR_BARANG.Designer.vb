@@ -22,9 +22,15 @@ Partial Class FR_BARANG
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "FR_BARANG"
+        SuspendLayout()
+        ' 
+        ' FR_BARANG
+        ' 
+        AutoScaleDimensions = New SizeF(13F, 32F)
+        AutoScaleMode = AutoScaleMode.Font
+        ClientSize = New Size(800, 450)
+        Name = "FR_BARANG"
+        Text = "DATA BARANG"
+        ResumeLayout(False)
     End Sub
 End Class

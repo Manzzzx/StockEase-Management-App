@@ -22,9 +22,15 @@ Partial Class FR_MASUK
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "FR_MASUK"
+        SuspendLayout()
+        ' 
+        ' FR_MASUK
+        ' 
+        AutoScaleDimensions = New SizeF(13F, 32F)
+        AutoScaleMode = AutoScaleMode.Font
+        ClientSize = New Size(800, 450)
+        Name = "FR_MASUK"
+        Text = "BARANG MASUK"
+        ResumeLayout(False)
     End Sub
 End Class
