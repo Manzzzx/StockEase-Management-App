@@ -4,7 +4,7 @@ Module Koneksi
     Public conn As MySqlConnection
 
     Public Sub BukaKoneksi()
-        conn = New MySqlConnection("server=localhost;user id=root;password=;database=db_login")
+        conn = New MySqlConnection("server=localhost;user id=root;password=;database=vbnet_projectuas")
         Try
             If conn.State = ConnectionState.Closed Then
                 conn.Open()
