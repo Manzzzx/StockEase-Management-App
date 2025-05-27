@@ -62,6 +62,21 @@ CREATE TABLE barang (
 );
 ```
 
+### Transaksi_masuk
+```sql
+CREATE TABLE transaksi_masuk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kode_barang VARCHAR(10) NOT NULL,
+    nama_barang VARCHAR(100) NOT NULL,
+    satuan VARCHAR(50) NOT NULL,
+    jumlah INT NOT NULL,
+    suplier VARCHAR(100) NOT NULL,
+    harga_partai INT NOT NULL,
+    tanggal_masuk DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (kode_barang) REFERENCES barang(kode_barang)
+);
+```
+
 
 
 ## Cara Penggunaan
