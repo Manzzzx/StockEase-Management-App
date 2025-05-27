@@ -46,6 +46,12 @@ Public Class FR_KARYAWAN
         AutoNIK()
     End Sub
 
+    Private Sub txtNoHP_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNoHP.KeyPress
+        If Not Char.IsDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
         BukaKoneksi()
         Dim cmd As New MySqlCommand("INSERT INTO karyawan VALUES (@nik, @nama, @tgl, @asal, @jk, @alamat, @nohp)", conn)

@@ -260,6 +260,7 @@ Partial Class FR_KARYAWAN
         Controls.Add(Label3)
         Controls.Add(Label2)
         Controls.Add(Label1)
+        FormBorderStyle = FormBorderStyle.None
         Name = "FR_KARYAWAN"
         StartPosition = FormStartPosition.CenterScreen
         Text = "DATA KARYAWAN"
