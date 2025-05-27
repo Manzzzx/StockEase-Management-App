@@ -42,7 +42,7 @@ Public Class FR_BARANG
 
     Private Sub FR_BARANG_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         txtKodeBarang.Text = AutoKode()
-        cbSatuan.Items.AddRange(New String() {"Pcs", "Lusin", "Box", "Set", "Unit"})
+        cbSatuan.Items.AddRange(New String() {"Pcs", "Lusin", "Kg", "Box", "Set", "Unit"})
         TampilBarang()
     End Sub
 

@@ -62,7 +62,7 @@ Partial Class FR_BARANG
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Location = New Point(632, 69)
+        Label3.Location = New Point(749, 67)
         Label3.Name = "Label3"
         Label3.Size = New Size(101, 32)
         Label3.TabIndex = 2
@@ -71,7 +71,7 @@ Partial Class FR_BARANG
         ' Label4
         ' 
         Label4.AutoSize = True
-        Label4.Location = New Point(632, 134)
+        Label4.Location = New Point(749, 132)
         Label4.Name = "Label4"
         Label4.Size = New Size(185, 32)
         Label4.TabIndex = 3
@@ -81,7 +81,7 @@ Partial Class FR_BARANG
         ' 
         DataGridView1.AllowUserToAddRows = False
         DataGridView1.AllowUserToDeleteRows = False
-        DataGridView1.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        DataGridView1.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
@@ -89,7 +89,7 @@ Partial Class FR_BARANG
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
         DataGridView1.RowHeadersWidth = 82
-        DataGridView1.Size = New Size(1074, 549)
+        DataGridView1.Size = New Size(1191, 434)
         DataGridView1.TabIndex = 4
         ' 
         ' txtKodeBarang
@@ -101,7 +101,7 @@ Partial Class FR_BARANG
         ' 
         ' txtHarga
         ' 
-        txtHarga.Location = New Point(846, 127)
+        txtHarga.Location = New Point(963, 125)
         txtHarga.Name = "txtHarga"
         txtHarga.Size = New Size(280, 39)
         txtHarga.TabIndex = 6
@@ -118,58 +118,58 @@ Partial Class FR_BARANG
         txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         txtCari.Location = New Point(253, 300)
         txtCari.Name = "txtCari"
-        txtCari.Size = New Size(873, 39)
+        txtCari.Size = New Size(990, 39)
         txtCari.TabIndex = 8
         ' 
         ' cbSatuan
         ' 
         cbSatuan.FormattingEnabled = True
-        cbSatuan.Location = New Point(846, 66)
+        cbSatuan.Location = New Point(963, 64)
         cbSatuan.Name = "cbSatuan"
         cbSatuan.Size = New Size(280, 40)
         cbSatuan.TabIndex = 9
         ' 
         ' btnSave
         ' 
-        btnSave.Location = New Point(52, 211)
+        btnSave.Location = New Point(52, 210)
         btnSave.Name = "btnSave"
-        btnSave.Size = New Size(196, 63)
+        btnSave.Size = New Size(220, 63)
         btnSave.TabIndex = 10
         btnSave.Text = "Save"
         btnSave.UseVisualStyleBackColor = True
         ' 
         ' btnUpdate
         ' 
-        btnUpdate.Location = New Point(266, 211)
+        btnUpdate.Location = New Point(297, 210)
         btnUpdate.Name = "btnUpdate"
-        btnUpdate.Size = New Size(196, 63)
+        btnUpdate.Size = New Size(220, 63)
         btnUpdate.TabIndex = 11
         btnUpdate.Text = "Update"
         btnUpdate.UseVisualStyleBackColor = True
         ' 
         ' btnDelete
         ' 
-        btnDelete.Location = New Point(486, 211)
+        btnDelete.Location = New Point(539, 210)
         btnDelete.Name = "btnDelete"
-        btnDelete.Size = New Size(196, 63)
+        btnDelete.Size = New Size(220, 63)
         btnDelete.TabIndex = 12
         btnDelete.Text = "Delete"
         btnDelete.UseVisualStyleBackColor = True
         ' 
         ' btnReset
         ' 
-        btnReset.Location = New Point(707, 211)
+        btnReset.Location = New Point(781, 210)
         btnReset.Name = "btnReset"
-        btnReset.Size = New Size(196, 63)
+        btnReset.Size = New Size(220, 63)
         btnReset.TabIndex = 13
         btnReset.Text = "Reset"
         btnReset.UseVisualStyleBackColor = True
         ' 
         ' btnExit
         ' 
-        btnExit.Location = New Point(930, 211)
+        btnExit.Location = New Point(1023, 210)
         btnExit.Name = "btnExit"
-        btnExit.Size = New Size(196, 63)
+        btnExit.Size = New Size(220, 63)
         btnExit.TabIndex = 14
         btnExit.Text = "Exit"
         btnExit.UseVisualStyleBackColor = True
@@ -187,7 +187,7 @@ Partial Class FR_BARANG
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1176, 944)
+        ClientSize = New Size(1293, 829)
         Controls.Add(Label5)
         Controls.Add(btnExit)
         Controls.Add(btnReset)
@@ -204,7 +204,6 @@ Partial Class FR_BARANG
         Controls.Add(Label3)
         Controls.Add(Label2)
         Controls.Add(Label1)
-        FormBorderStyle = FormBorderStyle.None
         Name = "FR_BARANG"
         StartPosition = FormStartPosition.CenterScreen
         Text = "DATA BARANG"

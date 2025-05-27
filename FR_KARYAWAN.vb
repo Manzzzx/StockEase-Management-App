@@ -12,7 +12,7 @@ Public Class FR_KARYAWAN
 
         With DataGridView1
             .Columns("nik").HeaderText = "NIK"
-            .Columns("nama").HeaderText = "Nama Karyawan"
+            .Columns("nama").HeaderText = "Nama"
             .Columns("tanggal_lahir").HeaderText = "Tanggal Lahir"
             .Columns("asal").HeaderText = "Asal"
             .Columns("jenis_kelamin").HeaderText = "Jenis Kelamin"

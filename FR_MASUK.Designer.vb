@@ -34,15 +34,25 @@ Partial Class FR_MASUK
         lblBarang = New Label()
         dgvTampil = New DataGridView()
         Panel1 = New Panel()
-        Panel2 = New Panel()
-        txtCari = New TextBox()
-        btnCari = New Button()
-        btnTambahBarang = New Button()
-        btnTambahStock = New Button()
+        pnCari = New Panel()
+        dgvCari = New DataGridView()
+        btnTutup = New Button()
+        txtPanelCari = New TextBox()
+        btnKeluar = New Button()
+        btnReset = New Button()
         Label6 = New Label()
         lblSatuan = New Label()
+        btnTambahStock = New Button()
+        btnTambahBarang = New Button()
+        btnCari = New Button()
+        Panel2 = New Panel()
+        txtCari = New TextBox()
+        btnNext = New Button()
+        btnPrev = New Button()
         CType(dgvTampil, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
+        pnCari.SuspendLayout()
+        CType(dgvCari, ComponentModel.ISupportInitialize).BeginInit()
         Panel2.SuspendLayout()
         SuspendLayout()
         ' 
@@ -102,7 +112,7 @@ Partial Class FR_MASUK
         ' 
         txtJumlah.Location = New Point(222, 242)
         txtJumlah.Name = "txtJumlah"
-        txtJumlah.Size = New Size(465, 39)
+        txtJumlah.Size = New Size(210, 39)
         txtJumlah.TabIndex = 6
         ' 
         ' txtSuplier
@@ -124,24 +134,31 @@ Partial Class FR_MASUK
         lblBarang.AutoSize = True
         lblBarang.Location = New Point(222, 99)
         lblBarang.Name = "lblBarang"
-        lblBarang.Size = New Size(158, 32)
+        lblBarang.Size = New Size(24, 32)
         lblBarang.TabIndex = 9
-        lblBarang.Text = "Nama Barang"
+        lblBarang.Text = "-"
         ' 
         ' dgvTampil
         ' 
         dgvTampil.AllowUserToAddRows = False
         dgvTampil.AllowUserToDeleteRows = False
+        dgvTampil.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvTampil.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvTampil.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvTampil.Dock = DockStyle.Fill
         dgvTampil.Location = New Point(723, 77)
         dgvTampil.Name = "dgvTampil"
+        dgvTampil.ReadOnly = True
+        dgvTampil.RowHeadersVisible = False
         dgvTampil.RowHeadersWidth = 82
-        dgvTampil.Size = New Size(981, 1033)
+        dgvTampil.Size = New Size(1616, 843)
         dgvTampil.TabIndex = 10
         ' 
         ' Panel1
         ' 
+        Panel1.Controls.Add(pnCari)
+        Panel1.Controls.Add(btnKeluar)
+        Panel1.Controls.Add(btnReset)
         Panel1.Controls.Add(Label6)
         Panel1.Controls.Add(lblSatuan)
         Panel1.Controls.Add(btnTambahStock)
@@ -160,52 +177,72 @@ Partial Class FR_MASUK
         Panel1.Dock = DockStyle.Left
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(723, 1110)
+        Panel1.Size = New Size(723, 920)
         Panel1.TabIndex = 11
         ' 
-        ' Panel2
+        ' pnCari
         ' 
-        Panel2.Controls.Add(txtCari)
-        Panel2.Dock = DockStyle.Top
-        Panel2.Location = New Point(723, 0)
-        Panel2.Name = "Panel2"
-        Panel2.Size = New Size(981, 77)
-        Panel2.TabIndex = 12
+        pnCari.Controls.Add(dgvCari)
+        pnCari.Controls.Add(btnTutup)
+        pnCari.Controls.Add(txtPanelCari)
+        pnCari.Location = New Point(0, 551)
+        pnCari.Name = "pnCari"
+        pnCari.Size = New Size(723, 386)
+        pnCari.TabIndex = 15
+        pnCari.Visible = False
         ' 
-        ' txtCari
+        ' dgvCari
         ' 
-        txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        txtCari.Location = New Point(22, 19)
-        txtCari.Name = "txtCari"
-        txtCari.Size = New Size(947, 39)
-        txtCari.TabIndex = 10
+        dgvCari.AllowUserToAddRows = False
+        dgvCari.AllowUserToDeleteRows = False
+        dgvCari.AllowUserToResizeColumns = False
+        dgvCari.AllowUserToResizeRows = False
+        dgvCari.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvCari.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        dgvCari.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvCari.Location = New Point(0, 77)
+        dgvCari.Name = "dgvCari"
+        dgvCari.RowHeadersVisible = False
+        dgvCari.RowHeadersWidth = 82
+        dgvCari.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvCari.Size = New Size(720, 857)
+        dgvCari.TabIndex = 17
         ' 
-        ' btnCari
+        ' btnTutup
         ' 
-        btnCari.Location = New Point(470, 9)
-        btnCari.Name = "btnCari"
-        btnCari.Size = New Size(217, 58)
-        btnCari.TabIndex = 10
-        btnCari.Text = "CARI"
-        btnCari.UseVisualStyleBackColor = True
+        btnTutup.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnTutup.Location = New Point(562, 19)
+        btnTutup.Name = "btnTutup"
+        btnTutup.Size = New Size(140, 39)
+        btnTutup.TabIndex = 16
+        btnTutup.Text = "TUTUP"
+        btnTutup.UseVisualStyleBackColor = True
         ' 
-        ' btnTambahBarang
+        ' txtPanelCari
         ' 
-        btnTambahBarang.Location = New Point(470, 86)
-        btnTambahBarang.Name = "btnTambahBarang"
-        btnTambahBarang.Size = New Size(217, 58)
-        btnTambahBarang.TabIndex = 11
-        btnTambahBarang.Text = "TAMBAH BARANG"
-        btnTambahBarang.UseVisualStyleBackColor = True
+        txtPanelCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        txtPanelCari.Location = New Point(12, 19)
+        txtPanelCari.Name = "txtPanelCari"
+        txtPanelCari.Size = New Size(532, 39)
+        txtPanelCari.TabIndex = 16
         ' 
-        ' btnTambahStock
+        ' btnKeluar
         ' 
-        btnTambahStock.Location = New Point(222, 461)
-        btnTambahStock.Name = "btnTambahStock"
-        btnTambahStock.Size = New Size(465, 62)
-        btnTambahStock.TabIndex = 12
-        btnTambahStock.Text = "TAMBAH STOCK"
-        btnTambahStock.UseVisualStyleBackColor = True
+        btnKeluar.Location = New Point(472, 461)
+        btnKeluar.Name = "btnKeluar"
+        btnKeluar.Size = New Size(215, 60)
+        btnKeluar.TabIndex = 17
+        btnKeluar.Text = "KELUAR"
+        btnKeluar.UseVisualStyleBackColor = True
+        ' 
+        ' btnReset
+        ' 
+        btnReset.Location = New Point(470, 122)
+        btnReset.Name = "btnReset"
+        btnReset.Size = New Size(217, 58)
+        btnReset.TabIndex = 16
+        btnReset.Text = "RESET"
+        btnReset.UseVisualStyleBackColor = True
         ' 
         ' Label6
         ' 
@@ -221,15 +258,81 @@ Partial Class FR_MASUK
         lblSatuan.AutoSize = True
         lblSatuan.Location = New Point(222, 172)
         lblSatuan.Name = "lblSatuan"
-        lblSatuan.Size = New Size(158, 32)
+        lblSatuan.Size = New Size(24, 32)
         lblSatuan.TabIndex = 14
-        lblSatuan.Text = "Nama Barang"
+        lblSatuan.Text = "-"
+        ' 
+        ' btnTambahStock
+        ' 
+        btnTambahStock.Location = New Point(222, 461)
+        btnTambahStock.Name = "btnTambahStock"
+        btnTambahStock.Size = New Size(215, 60)
+        btnTambahStock.TabIndex = 12
+        btnTambahStock.Text = "TAMBAH STOCK"
+        btnTambahStock.UseVisualStyleBackColor = True
+        ' 
+        ' btnTambahBarang
+        ' 
+        btnTambahBarang.Location = New Point(470, 232)
+        btnTambahBarang.Name = "btnTambahBarang"
+        btnTambahBarang.Size = New Size(217, 58)
+        btnTambahBarang.TabIndex = 11
+        btnTambahBarang.Text = "TAMBAH BARANG"
+        btnTambahBarang.UseVisualStyleBackColor = True
+        ' 
+        ' btnCari
+        ' 
+        btnCari.Location = New Point(470, 17)
+        btnCari.Name = "btnCari"
+        btnCari.Size = New Size(217, 51)
+        btnCari.TabIndex = 10
+        btnCari.Text = "CARI"
+        btnCari.UseVisualStyleBackColor = True
+        ' 
+        ' Panel2
+        ' 
+        Panel2.Controls.Add(btnPrev)
+        Panel2.Controls.Add(btnNext)
+        Panel2.Controls.Add(txtCari)
+        Panel2.Dock = DockStyle.Top
+        Panel2.Location = New Point(723, 0)
+        Panel2.Name = "Panel2"
+        Panel2.Size = New Size(1616, 77)
+        Panel2.TabIndex = 12
+        ' 
+        ' txtCari
+        ' 
+        txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        txtCari.Location = New Point(6, 19)
+        txtCari.Name = "txtCari"
+        txtCari.Size = New Size(1311, 39)
+        txtCari.TabIndex = 10
+        ' 
+        ' btnNext
+        ' 
+        btnNext.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnNext.Location = New Point(1489, 17)
+        btnNext.Name = "btnNext"
+        btnNext.Size = New Size(115, 41)
+        btnNext.TabIndex = 18
+        btnNext.Text = ">"
+        btnNext.UseVisualStyleBackColor = True
+        ' 
+        ' btnPrev
+        ' 
+        btnPrev.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnPrev.Location = New Point(1356, 18)
+        btnPrev.Name = "btnPrev"
+        btnPrev.Size = New Size(115, 41)
+        btnPrev.TabIndex = 19
+        btnPrev.Text = "<"
+        btnPrev.UseVisualStyleBackColor = True
         ' 
         ' FR_MASUK
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1704, 1110)
+        ClientSize = New Size(2339, 920)
         Controls.Add(dgvTampil)
         Controls.Add(Panel2)
         Controls.Add(Panel1)
@@ -238,6 +341,9 @@ Partial Class FR_MASUK
         CType(dgvTampil, ComponentModel.ISupportInitialize).EndInit()
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
+        pnCari.ResumeLayout(False)
+        pnCari.PerformLayout()
+        CType(dgvCari, ComponentModel.ISupportInitialize).EndInit()
         Panel2.ResumeLayout(False)
         Panel2.PerformLayout()
         ResumeLayout(False)
@@ -262,4 +368,12 @@ Partial Class FR_MASUK
     Friend WithEvents btnCari As Button
     Friend WithEvents Label6 As Label
     Friend WithEvents lblSatuan As Label
+    Friend WithEvents pnCari As Panel
+    Friend WithEvents dgvCari As DataGridView
+    Friend WithEvents btnTutup As Button
+    Friend WithEvents txtPanelCari As TextBox
+    Friend WithEvents btnKeluar As Button
+    Friend WithEvents btnReset As Button
+    Friend WithEvents btnPrev As Button
+    Friend WithEvents btnNext As Button
 End Class
