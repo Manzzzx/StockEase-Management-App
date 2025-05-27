@@ -46,9 +46,10 @@ Partial Class FR_MASUK
         btnTambahBarang = New Button()
         btnCari = New Button()
         Panel2 = New Panel()
-        txtCari = New TextBox()
-        btnNext = New Button()
+        lblPagingInfo = New Label()
         btnPrev = New Button()
+        btnNext = New Button()
+        txtCari = New TextBox()
         CType(dgvTampil, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
         pnCari.SuspendLayout()
@@ -185,9 +186,10 @@ Partial Class FR_MASUK
         pnCari.Controls.Add(dgvCari)
         pnCari.Controls.Add(btnTutup)
         pnCari.Controls.Add(txtPanelCari)
-        pnCari.Location = New Point(0, 551)
+        pnCari.Dock = DockStyle.Fill
+        pnCari.Location = New Point(0, 0)
         pnCari.Name = "pnCari"
-        pnCari.Size = New Size(723, 386)
+        pnCari.Size = New Size(723, 920)
         pnCari.TabIndex = 15
         pnCari.Visible = False
         ' 
@@ -291,6 +293,7 @@ Partial Class FR_MASUK
         ' 
         ' Panel2
         ' 
+        Panel2.Controls.Add(lblPagingInfo)
         Panel2.Controls.Add(btnPrev)
         Panel2.Controls.Add(btnNext)
         Panel2.Controls.Add(txtCari)
@@ -300,33 +303,41 @@ Partial Class FR_MASUK
         Panel2.Size = New Size(1616, 77)
         Panel2.TabIndex = 12
         ' 
-        ' txtCari
+        ' lblPagingInfo
         ' 
-        txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        txtCari.Location = New Point(6, 19)
-        txtCari.Name = "txtCari"
-        txtCari.Size = New Size(1311, 39)
-        txtCari.TabIndex = 10
+        lblPagingInfo.AutoSize = True
+        lblPagingInfo.Location = New Point(1365, 21)
+        lblPagingInfo.Name = "lblPagingInfo"
+        lblPagingInfo.Size = New Size(0, 32)
+        lblPagingInfo.TabIndex = 20
+        ' 
+        ' btnPrev
+        ' 
+        btnPrev.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnPrev.Location = New Point(1232, 18)
+        btnPrev.Name = "btnPrev"
+        btnPrev.Size = New Size(115, 41)
+        btnPrev.TabIndex = 19
+        btnPrev.Text = "<"
+        btnPrev.UseVisualStyleBackColor = True
         ' 
         ' btnNext
         ' 
         btnNext.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnNext.Location = New Point(1489, 17)
+        btnNext.Location = New Point(1476, 17)
         btnNext.Name = "btnNext"
         btnNext.Size = New Size(115, 41)
         btnNext.TabIndex = 18
         btnNext.Text = ">"
         btnNext.UseVisualStyleBackColor = True
         ' 
-        ' btnPrev
+        ' txtCari
         ' 
-        btnPrev.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnPrev.Location = New Point(1356, 18)
-        btnPrev.Name = "btnPrev"
-        btnPrev.Size = New Size(115, 41)
-        btnPrev.TabIndex = 19
-        btnPrev.Text = "<"
-        btnPrev.UseVisualStyleBackColor = True
+        txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        txtCari.Location = New Point(6, 19)
+        txtCari.Name = "txtCari"
+        txtCari.Size = New Size(1195, 39)
+        txtCari.TabIndex = 10
         ' 
         ' FR_MASUK
         ' 
@@ -376,4 +387,5 @@ Partial Class FR_MASUK
     Friend WithEvents btnReset As Button
     Friend WithEvents btnPrev As Button
     Friend WithEvents btnNext As Button
+    Friend WithEvents lblPagingInfo As Label
 End Class

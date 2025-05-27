@@ -1,6 +1,12 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Drawing.Printing
+Imports MySql.Data.MySqlClient
 
 Public Class FR_MASUK
+    Dim currentPage As Integer = 1
+    Dim pageSize As Integer = 5
+    Dim totalRows As Integer = 0
+    Dim totalPages As Integer = 0
+
     Sub TampilSemuaBarang()
         Try
             BukaKoneksi()
@@ -45,7 +51,17 @@ Public Class FR_MASUK
     Sub TampilTransaksiMasuk()
         Try
             BukaKoneksi()
-            Dim da As New MySqlDataAdapter("SELECT id, kode_barang, nama_barang, satuan, jumlah, suplier, harga_partai, tanggal_masuk FROM transaksi_masuk ORDER BY id ASC", conn)
+            ' Hitung total data dulu
+            Dim cmdCount As New MySqlCommand("SELECT COUNT(*) FROM transaksi_masuk", conn)
+            totalRows = Convert.ToInt32(cmdCount.ExecuteScalar())
+            totalPages = Math.Ceiling(totalRows / pageSize)
+
+            ' Ambil data dengan LIMIT dan OFFSET
+            Dim offset As Integer = (currentPage - 1) * pageSize
+            Dim da As New MySqlDataAdapter("SELECT id, kode_barang, nama_barang, satuan, jumlah, suplier, harga_partai, tanggal_masuk FROM transaksi_masuk ORDER BY id ASC LIMIT @limit OFFSET @offset", conn)
+            da.SelectCommand.Parameters.AddWithValue("@limit", pageSize)
+            da.SelectCommand.Parameters.AddWithValue("@offset", offset)
+
             Dim dt As New DataTable
             da.Fill(dt)
             dgvTampil.Rows.Clear()
@@ -55,6 +71,7 @@ Public Class FR_MASUK
         Catch ex As Exception
             MsgBox("Gagal load data: " & ex.Message, MsgBoxStyle.Critical)
         End Try
+        lblPagingInfo.Text = currentPage & " dari " & totalPages
     End Sub
 
     Private Sub FR_MASUK_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -220,4 +237,19 @@ Public Class FR_MASUK
         Me.Close()
         FR_MENU.Show()
     End Sub
+
+    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
+        If currentPage < totalPages Then
+            currentPage += 1
+            TampilTransaksiMasuk()
+        End If
+    End Sub
+
+    Private Sub btnPrev_Click(sender As Object, e As EventArgs) Handles btnPrev.Click
+        If currentPage > 1 Then
+            currentPage -= 1
+            TampilTransaksiMasuk()
+        End If
+    End Sub
+
 End Class
