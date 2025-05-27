@@ -22,6 +22,7 @@ Partial Class FR_MASUK
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Label1 = New Label()
         Label2 = New Label()
         Label3 = New Label()
@@ -50,11 +51,14 @@ Partial Class FR_MASUK
         btnPrev = New Button()
         btnNext = New Button()
         txtCari = New TextBox()
+        ContextMenuStrip1 = New ContextMenuStrip(components)
+        HapusToolStripMenuItem = New ToolStripMenuItem()
         CType(dgvTampil, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
         pnCari.SuspendLayout()
         CType(dgvCari, ComponentModel.ISupportInitialize).BeginInit()
         Panel2.SuspendLayout()
+        ContextMenuStrip1.SuspendLayout()
         SuspendLayout()
         ' 
         ' Label1
@@ -146,6 +150,7 @@ Partial Class FR_MASUK
         dgvTampil.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvTampil.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvTampil.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvTampil.ContextMenuStrip = ContextMenuStrip1
         dgvTampil.Dock = DockStyle.Fill
         dgvTampil.Location = New Point(723, 77)
         dgvTampil.Name = "dgvTampil"
@@ -339,6 +344,19 @@ Partial Class FR_MASUK
         txtCari.Size = New Size(1195, 39)
         txtCari.TabIndex = 10
         ' 
+        ' ContextMenuStrip1
+        ' 
+        ContextMenuStrip1.ImageScalingSize = New Size(32, 32)
+        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {HapusToolStripMenuItem})
+        ContextMenuStrip1.Name = "ContextMenuStrip1"
+        ContextMenuStrip1.Size = New Size(301, 86)
+        ' 
+        ' HapusToolStripMenuItem
+        ' 
+        HapusToolStripMenuItem.Name = "HapusToolStripMenuItem"
+        HapusToolStripMenuItem.Size = New Size(300, 38)
+        HapusToolStripMenuItem.Text = "Hapus"
+        ' 
         ' FR_MASUK
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
@@ -357,6 +375,7 @@ Partial Class FR_MASUK
         CType(dgvCari, ComponentModel.ISupportInitialize).EndInit()
         Panel2.ResumeLayout(False)
         Panel2.PerformLayout()
+        ContextMenuStrip1.ResumeLayout(False)
         ResumeLayout(False)
     End Sub
 
@@ -388,4 +407,6 @@ Partial Class FR_MASUK
     Friend WithEvents btnPrev As Button
     Friend WithEvents btnNext As Button
     Friend WithEvents lblPagingInfo As Label
+    Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
+    Friend WithEvents HapusToolStripMenuItem As ToolStripMenuItem
 End Class

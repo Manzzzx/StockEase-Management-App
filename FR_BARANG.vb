@@ -13,6 +13,7 @@ Public Class FR_BARANG
             .Columns("nama_barang").HeaderText = "Nama Barang"
             .Columns("satuan").HeaderText = "Satuan"
             .Columns("harga_satuan").HeaderText = "Harga Satuan"
+            .Columns("harga_satuan").DefaultCellStyle.Format = "N0"
         End With
     End Sub
 

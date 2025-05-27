@@ -84,6 +84,8 @@ Public Class FR_MASUK
             dgvTampil.Columns.Add("suplier", "Suplier")
             dgvTampil.Columns.Add("harga_partai", "Harga Partai")
             dgvTampil.Columns.Add("tanggal_masuk", "Tanggal Masuk")
+            dgvTampil.Columns("harga_partai").DefaultCellStyle.Format = "N0"
+            dgvTampil.Columns("jumlah").DefaultCellStyle.Format = "N0"
         End If
         TampilTransaksiMasuk()
     End Sub
@@ -252,4 +254,28 @@ Public Class FR_MASUK
         End If
     End Sub
 
+    Private Sub HapusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles HapusToolStripMenuItem.Click
+        ' Konfirmasi dari pengguna
+        If MsgBox("Yakin ingin menghapus data ini?", MsgBoxStyle.Question Or MsgBoxStyle.YesNo) = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        Try
+            ' Ambil ID dari baris yang dipilih
+            Dim id As Integer = dgvTampil.SelectedRows(0).Cells("id").Value
+
+            ' Hapus dari database
+            BukaKoneksi()
+            Dim cmd As New MySqlCommand("DELETE FROM transaksi_masuk WHERE id=@id", conn)
+            cmd.Parameters.AddWithValue("@id", id)
+            cmd.ExecuteNonQuery()
+
+            ' Refresh DataGridView
+            TampilTransaksiMasuk()
+
+            MsgBox("Data berhasil dihapus.", MsgBoxStyle.Information)
+        Catch ex As Exception
+            MsgBox("Gagal menghapus data: " & ex.Message, MsgBoxStyle.Critical)
+        End Try
+    End Sub
 End Class
