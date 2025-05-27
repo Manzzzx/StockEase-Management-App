@@ -94,7 +94,7 @@ Partial Class FR_BARANG
         ' 
         ' txtKodeBarang
         ' 
-        txtKodeBarang.Location = New Point(231, 69)
+        txtKodeBarang.Location = New Point(266, 69)
         txtKodeBarang.Name = "txtKodeBarang"
         txtKodeBarang.Size = New Size(280, 39)
         txtKodeBarang.TabIndex = 5

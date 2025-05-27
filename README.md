@@ -52,6 +52,16 @@ CREATE TABLE karyawan (
 );
 ```
 
+### Barang
+```sql
+CREATE TABLE barang (
+    kode_barang VARCHAR(10) PRIMARY KEY,
+    nama_barang VARCHAR(100),
+    satuan VARCHAR(50),
+    harga_satuan INT
+);
+```
+
 
 
 ## Cara Penggunaan
