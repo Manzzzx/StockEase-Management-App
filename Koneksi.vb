@@ -2,6 +2,11 @@
 
 Module Koneksi
     Public conn As MySqlConnection
+    Public cmd As MySqlCommand
+    Public da As MySqlDataAdapter
+    Public rd As MySqlDataReader
+    Public ds As DataSet
+    Public dt As DataTable
 
     Public Sub BukaKoneksi()
         conn = New MySqlConnection("server=localhost;user id=root;password=;database=vbnet_projectuas")

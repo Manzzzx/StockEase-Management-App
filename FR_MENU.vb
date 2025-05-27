@@ -2,6 +2,7 @@
     Private Sub mnLogout_Click(sender As Object, e As EventArgs) Handles mnLogout.Click
         Dim result As DialogResult = MessageBox.Show("Yakin mau logout?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If result = DialogResult.Yes Then
+            LoggedInUser = String.Empty
             Me.Hide()
             formLogin.Show()
         End If
@@ -53,6 +54,7 @@
         txtTanggal.Text = FormatDateTime(Date.Now, DateFormat.LongDate)
         txtWaktu.Text = TimeOfDay.ToString("HH:mm:ss")
         WAKTU.Enabled = True
+        ToolStripLabelUser.Text = "Login sebagai: " & LoggedInUser
     End Sub
 
     Private Sub WAKTU_Tick(sender As Object, e As EventArgs) Handles WAKTU.Tick

@@ -9,6 +9,16 @@ Public Class FR_KARYAWAN
         da.Fill(dt)
         DataGridView1.DataSource = dt
         conn.Close()
+
+        With DataGridView1
+            .Columns("nik").HeaderText = "NIK"
+            .Columns("nama").HeaderText = "Nama Karyawan"
+            .Columns("tanggal_lahir").HeaderText = "Tanggal Lahir"
+            .Columns("asal").HeaderText = "Asal"
+            .Columns("jenis_kelamin").HeaderText = "Jenis Kelamin"
+            .Columns("alamat").HeaderText = "Alamat"
+            .Columns("no_hp").HeaderText = "No HP"
+        End With
     End Sub
 
     Sub AutoNIK()

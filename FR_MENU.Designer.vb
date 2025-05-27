@@ -40,6 +40,8 @@ Partial Class FR_MENU
         ToolStripSeparator2 = New ToolStripSeparator()
         txtWaktu = New ToolStripLabel()
         WAKTU = New Timer(components)
+        ToolStripSeparator1 = New ToolStripSeparator()
+        ToolStripLabelUser = New ToolStripLabel()
         MenuStrip1.SuspendLayout()
         ToolStrip1.SuspendLayout()
         SuspendLayout()
@@ -126,7 +128,7 @@ Partial Class FR_MENU
         ' ToolStrip1
         ' 
         ToolStrip1.ImageScalingSize = New Size(32, 32)
-        ToolStrip1.Items.AddRange(New ToolStripItem() {txtTanggal, ToolStripSeparator2, txtWaktu})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {txtTanggal, ToolStripSeparator2, txtWaktu, ToolStripSeparator1, ToolStripLabelUser})
         ToolStrip1.Location = New Point(0, 40)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.Size = New Size(800, 38)
@@ -152,6 +154,17 @@ Partial Class FR_MENU
         ' 
         ' WAKTU
         ' 
+        ' 
+        ' ToolStripSeparator1
+        ' 
+        ToolStripSeparator1.Name = "ToolStripSeparator1"
+        ToolStripSeparator1.Size = New Size(6, 38)
+        ' 
+        ' ToolStripLabelUser
+        ' 
+        ToolStripLabelUser.Name = "ToolStripLabelUser"
+        ToolStripLabelUser.Size = New Size(69, 32)
+        ToolStripLabelUser.Text = "USER"
         ' 
         ' FR_MENU
         ' 
@@ -191,5 +204,7 @@ Partial Class FR_MENU
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents txtWaktu As ToolStripLabel
     Friend WithEvents WAKTU As Timer
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents ToolStripLabelUser As ToolStripLabel
 
 End Class

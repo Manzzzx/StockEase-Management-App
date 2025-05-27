@@ -20,9 +20,8 @@ Public Class formLogin
                 MsgBox("Login berhasil!", MsgBoxStyle.Information)
                 rd.Close()
                 conn.Close()
-
-                txtUsername.Clear()
-                txtPassword.Clear()
+                LoggedInUser = txtUsername.Text
+                IsLoggedIn = True
                 Me.Hide()
                 Menu.Show()
             Else
