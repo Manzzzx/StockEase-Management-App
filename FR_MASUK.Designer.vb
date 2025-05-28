@@ -34,6 +34,8 @@ Partial Class FR_MASUK
         txtHargaPartai = New TextBox()
         lblBarang = New Label()
         dgvTampil = New DataGridView()
+        ContextMenuStrip1 = New ContextMenuStrip(components)
+        HapusToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
         pnCari = New Panel()
         dgvCari = New DataGridView()
@@ -51,14 +53,12 @@ Partial Class FR_MASUK
         btnPrev = New Button()
         btnNext = New Button()
         txtCari = New TextBox()
-        ContextMenuStrip1 = New ContextMenuStrip(components)
-        HapusToolStripMenuItem = New ToolStripMenuItem()
         CType(dgvTampil, ComponentModel.ISupportInitialize).BeginInit()
+        ContextMenuStrip1.SuspendLayout()
         Panel1.SuspendLayout()
         pnCari.SuspendLayout()
         CType(dgvCari, ComponentModel.ISupportInitialize).BeginInit()
         Panel2.SuspendLayout()
-        ContextMenuStrip1.SuspendLayout()
         SuspendLayout()
         ' 
         ' Label1
@@ -157,8 +157,21 @@ Partial Class FR_MASUK
         dgvTampil.ReadOnly = True
         dgvTampil.RowHeadersVisible = False
         dgvTampil.RowHeadersWidth = 82
-        dgvTampil.Size = New Size(1616, 843)
+        dgvTampil.Size = New Size(1619, 1070)
         dgvTampil.TabIndex = 10
+        ' 
+        ' ContextMenuStrip1
+        ' 
+        ContextMenuStrip1.ImageScalingSize = New Size(32, 32)
+        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {HapusToolStripMenuItem})
+        ContextMenuStrip1.Name = "ContextMenuStrip1"
+        ContextMenuStrip1.Size = New Size(156, 42)
+        ' 
+        ' HapusToolStripMenuItem
+        ' 
+        HapusToolStripMenuItem.Name = "HapusToolStripMenuItem"
+        HapusToolStripMenuItem.Size = New Size(155, 38)
+        HapusToolStripMenuItem.Text = "Hapus"
         ' 
         ' Panel1
         ' 
@@ -183,7 +196,7 @@ Partial Class FR_MASUK
         Panel1.Dock = DockStyle.Left
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(723, 920)
+        Panel1.Size = New Size(723, 1147)
         Panel1.TabIndex = 11
         ' 
         ' pnCari
@@ -191,10 +204,9 @@ Partial Class FR_MASUK
         pnCari.Controls.Add(dgvCari)
         pnCari.Controls.Add(btnTutup)
         pnCari.Controls.Add(txtPanelCari)
-        pnCari.Dock = DockStyle.Fill
-        pnCari.Location = New Point(0, 0)
+        pnCari.Location = New Point(0, 536)
         pnCari.Name = "pnCari"
-        pnCari.Size = New Size(723, 920)
+        pnCari.Size = New Size(723, 611)
         pnCari.TabIndex = 15
         pnCari.Visible = False
         ' 
@@ -212,7 +224,7 @@ Partial Class FR_MASUK
         dgvCari.RowHeadersVisible = False
         dgvCari.RowHeadersWidth = 82
         dgvCari.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        dgvCari.Size = New Size(720, 857)
+        dgvCari.Size = New Size(720, 1070)
         dgvCari.TabIndex = 17
         ' 
         ' btnTutup
@@ -305,21 +317,23 @@ Partial Class FR_MASUK
         Panel2.Dock = DockStyle.Top
         Panel2.Location = New Point(723, 0)
         Panel2.Name = "Panel2"
-        Panel2.Size = New Size(1616, 77)
+        Panel2.Size = New Size(1619, 77)
         Panel2.TabIndex = 12
         ' 
         ' lblPagingInfo
         ' 
+        lblPagingInfo.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         lblPagingInfo.AutoSize = True
-        lblPagingInfo.Location = New Point(1365, 21)
+        lblPagingInfo.Location = New Point(1363, 22)
         lblPagingInfo.Name = "lblPagingInfo"
-        lblPagingInfo.Size = New Size(0, 32)
+        lblPagingInfo.Size = New Size(24, 32)
         lblPagingInfo.TabIndex = 20
+        lblPagingInfo.Text = "-"
         ' 
         ' btnPrev
         ' 
         btnPrev.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnPrev.Location = New Point(1232, 18)
+        btnPrev.Location = New Point(1235, 18)
         btnPrev.Name = "btnPrev"
         btnPrev.Size = New Size(115, 41)
         btnPrev.TabIndex = 19
@@ -329,7 +343,7 @@ Partial Class FR_MASUK
         ' btnNext
         ' 
         btnNext.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnNext.Location = New Point(1476, 17)
+        btnNext.Location = New Point(1479, 17)
         btnNext.Name = "btnNext"
         btnNext.Size = New Size(115, 41)
         btnNext.TabIndex = 18
@@ -341,33 +355,21 @@ Partial Class FR_MASUK
         txtCari.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         txtCari.Location = New Point(6, 19)
         txtCari.Name = "txtCari"
-        txtCari.Size = New Size(1195, 39)
+        txtCari.Size = New Size(1198, 39)
         txtCari.TabIndex = 10
-        ' 
-        ' ContextMenuStrip1
-        ' 
-        ContextMenuStrip1.ImageScalingSize = New Size(32, 32)
-        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {HapusToolStripMenuItem})
-        ContextMenuStrip1.Name = "ContextMenuStrip1"
-        ContextMenuStrip1.Size = New Size(301, 86)
-        ' 
-        ' HapusToolStripMenuItem
-        ' 
-        HapusToolStripMenuItem.Name = "HapusToolStripMenuItem"
-        HapusToolStripMenuItem.Size = New Size(300, 38)
-        HapusToolStripMenuItem.Text = "Hapus"
         ' 
         ' FR_MASUK
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(2339, 920)
+        ClientSize = New Size(2342, 1147)
         Controls.Add(dgvTampil)
         Controls.Add(Panel2)
         Controls.Add(Panel1)
         Name = "FR_MASUK"
         Text = "BARANG MASUK"
         CType(dgvTampil, ComponentModel.ISupportInitialize).EndInit()
+        ContextMenuStrip1.ResumeLayout(False)
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         pnCari.ResumeLayout(False)
@@ -375,7 +377,6 @@ Partial Class FR_MASUK
         CType(dgvCari, ComponentModel.ISupportInitialize).EndInit()
         Panel2.ResumeLayout(False)
         Panel2.PerformLayout()
-        ContextMenuStrip1.ResumeLayout(False)
         ResumeLayout(False)
     End Sub
 

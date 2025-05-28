@@ -39,7 +39,9 @@
     End Sub
 
     Private Sub mnBarangKeluar_Click(sender As Object, e As EventArgs) Handles mnBarangKeluar.Click
-        BukaForm(FR_KELUAR)
+        Dim fr As New FR_KELUAR
+        fr.Show()
+        Me.Hide()
     End Sub
 
     Private Sub mnLaporan_Click(sender As Object, e As EventArgs) Handles mnLaporan.Click

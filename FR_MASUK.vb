@@ -1,5 +1,4 @@
-﻿Imports System.Drawing.Printing
-Imports MySql.Data.MySqlClient
+﻿Imports MySql.Data.MySqlClient
 
 Public Class FR_MASUK
     Dim currentPage As Integer = 1
