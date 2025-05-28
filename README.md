@@ -120,4 +120,4 @@ Silakan buat pull request atau issue untuk perbaikan dan pengembangan fitur.
 ---
 
 **Catatan:**  
-Aplikasi ini dikembangkan menggunakan Visual Basic .NET dan Windows Forms. Pastikan .NET Framework yang sesuai sudah terpasang di komputer Anda.
+Aplikasi ini dikembangkan menggunakan Visual Basic .NET dan Windows Forms. Pastikan .NET Framework yang sesuai sudah terpasang di komputer.
