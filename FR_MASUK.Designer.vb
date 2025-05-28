@@ -110,14 +110,14 @@ Partial Class FR_MASUK
         ' 
         txtKode.Location = New Point(222, 19)
         txtKode.Name = "txtKode"
-        txtKode.Size = New Size(210, 39)
+        txtKode.Size = New Size(215, 39)
         txtKode.TabIndex = 5
         ' 
         ' txtJumlah
         ' 
         txtJumlah.Location = New Point(222, 242)
         txtJumlah.Name = "txtJumlah"
-        txtJumlah.Size = New Size(210, 39)
+        txtJumlah.Size = New Size(215, 39)
         txtJumlah.TabIndex = 6
         ' 
         ' txtSuplier

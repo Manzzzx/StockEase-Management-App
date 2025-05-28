@@ -39,6 +39,10 @@ Partial Class FR_KELUAR
         Label3 = New Label()
         Label2 = New Label()
         Label1 = New Label()
+        pnCari = New Panel()
+        dgvCari = New DataGridView()
+        btnTutup = New Button()
+        txtCari = New TextBox()
         Panel2 = New Panel()
         btnMinimize = New Button()
         btnMenu = New Button()
@@ -55,6 +59,8 @@ Partial Class FR_KELUAR
         Panel1.SuspendLayout()
         GroupBox2.SuspendLayout()
         GroupBox1.SuspendLayout()
+        pnCari.SuspendLayout()
+        CType(dgvCari, ComponentModel.ISupportInitialize).BeginInit()
         Panel2.SuspendLayout()
         CType(dgvTampil, ComponentModel.ISupportInitialize).BeginInit()
         ContextMenuStrip1.SuspendLayout()
@@ -218,6 +224,47 @@ Partial Class FR_KELUAR
         Label1.TabIndex = 0
         Label1.Text = "Kode"
         ' 
+        ' pnCari
+        ' 
+        pnCari.Controls.Add(dgvCari)
+        pnCari.Controls.Add(btnTutup)
+        pnCari.Controls.Add(txtCari)
+        pnCari.Location = New Point(0, 397)
+        pnCari.Name = "pnCari"
+        pnCari.Size = New Size(843, 394)
+        pnCari.TabIndex = 3
+        pnCari.Visible = False
+        ' 
+        ' dgvCari
+        ' 
+        dgvCari.AllowUserToAddRows = False
+        dgvCari.AllowUserToDeleteRows = False
+        dgvCari.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvCari.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        dgvCari.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvCari.ColumnHeadersVisible = False
+        dgvCari.Location = New Point(23, 81)
+        dgvCari.Name = "dgvCari"
+        dgvCari.RowHeadersWidth = 82
+        dgvCari.Size = New Size(802, 286)
+        dgvCari.TabIndex = 2
+        ' 
+        ' btnTutup
+        ' 
+        btnTutup.Location = New Point(687, 18)
+        btnTutup.Name = "btnTutup"
+        btnTutup.Size = New Size(138, 43)
+        btnTutup.TabIndex = 1
+        btnTutup.Text = "Tutup"
+        btnTutup.UseVisualStyleBackColor = True
+        ' 
+        ' txtCari
+        ' 
+        txtCari.Location = New Point(23, 18)
+        txtCari.Name = "txtCari"
+        txtCari.Size = New Size(646, 39)
+        txtCari.TabIndex = 0
+        ' 
         ' Panel2
         ' 
         Panel2.Controls.Add(btnMinimize)
@@ -333,6 +380,7 @@ Partial Class FR_KELUAR
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(2686, 1275)
+        Controls.Add(pnCari)
         Controls.Add(dgvTampil)
         Controls.Add(Panel2)
         Controls.Add(Panel1)
@@ -344,6 +392,9 @@ Partial Class FR_KELUAR
         GroupBox2.ResumeLayout(False)
         GroupBox1.ResumeLayout(False)
         GroupBox1.PerformLayout()
+        pnCari.ResumeLayout(False)
+        pnCari.PerformLayout()
+        CType(dgvCari, ComponentModel.ISupportInitialize).EndInit()
         Panel2.ResumeLayout(False)
         CType(dgvTampil, ComponentModel.ISupportInitialize).EndInit()
         ContextMenuStrip1.ResumeLayout(False)
@@ -380,4 +431,8 @@ Partial Class FR_KELUAR
     Friend WithEvents Qty As DataGridViewTextBoxColumn
     Friend WithEvents Total As DataGridViewTextBoxColumn
     Friend WithEvents txtJumlah As TextBox
+    Friend WithEvents txtCari As TextBox
+    Friend WithEvents btnTutup As Button
+    Friend WithEvents pnCari As Panel
+    Friend WithEvents dgvCari As DataGridView
 End Class

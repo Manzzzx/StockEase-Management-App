@@ -63,4 +63,5 @@
         txtTanggal.Text = FormatDateTime(Date.Now, DateFormat.LongDate)
         txtWaktu.Text = TimeOfDay.ToString("HH:mm:ss")
     End Sub
+
 End Class

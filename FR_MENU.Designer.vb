@@ -39,9 +39,9 @@ Partial Class FR_MENU
         txtTanggal = New ToolStripLabel()
         ToolStripSeparator2 = New ToolStripSeparator()
         txtWaktu = New ToolStripLabel()
-        WAKTU = New Timer(components)
         ToolStripSeparator1 = New ToolStripSeparator()
         ToolStripLabelUser = New ToolStripLabel()
+        WAKTU = New Timer(components)
         MenuStrip1.SuspendLayout()
         ToolStrip1.SuspendLayout()
         SuspendLayout()
@@ -152,9 +152,6 @@ Partial Class FR_MENU
         txtWaktu.Size = New Size(59, 32)
         txtWaktu.Text = "JAM"
         ' 
-        ' WAKTU
-        ' 
-        ' 
         ' ToolStripSeparator1
         ' 
         ToolStripSeparator1.Name = "ToolStripSeparator1"
@@ -165,6 +162,9 @@ Partial Class FR_MENU
         ToolStripLabelUser.Name = "ToolStripLabelUser"
         ToolStripLabelUser.Size = New Size(69, 32)
         ToolStripLabelUser.Text = "USER"
+        ' 
+        ' WAKTU
+        ' 
         ' 
         ' FR_MENU
         ' 

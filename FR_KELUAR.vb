@@ -1,5 +1,19 @@
 ﻿Imports MySql.Data.MySqlClient
 Public Class FR_KELUAR
+    Sub TampilSemuaBarang()
+        Try
+            BukaKoneksi()
+            Dim da As New MySqlDataAdapter("SELECT kode_barang, nama_barang, satuan FROM barang", conn)
+            Dim dt As New DataTable
+            da.Fill(dt)
+            dgvCari.DataSource = dt
+            dgvCari.Columns("kode_barang").HeaderText = "Kode"
+            dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
+            dgvCari.Columns("satuan").HeaderText = "Satuan"
+        Catch ex As Exception
+            MsgBox("Error: " & ex.Message)
+        End Try
+    End Sub
     Private Sub btnMenu_Click(sender As Object, e As EventArgs) Handles btnMenu.Click
         Dim fr As New FR_MENU
         fr.Show()
@@ -131,7 +145,7 @@ Public Class FR_KELUAR
                 End If
             End If
         Next
-        lblHarga.Text = sum.ToString("N0")
+        lblHarga.Text = String.Format("Rp {0:N0}", sum)
     End Sub
 
 
@@ -237,4 +251,47 @@ Public Class FR_KELUAR
 
         Return (stok_masuk - stok_keluar) - stok_order
     End Function
+
+    Private Sub btnCari_Click(sender As Object, e As EventArgs) Handles btnCari.Click
+        pnCari.Visible = True
+        txtCari.Text = ""
+        TampilSemuaBarang()
+        txtCari.Focus()
+    End Sub
+
+    Private Sub btnTutup_Click(sender As Object, e As EventArgs) Handles btnTutup.Click
+        pnCari.Visible = False
+    End Sub
+
+    Private Sub txtCari_TextChanged(sender As Object, e As EventArgs) Handles txtCari.TextChanged
+        If txtCari.Text.Trim() = "" Then
+            dgvCari.DataSource = Nothing
+            Return
+        End If
+
+        Try
+            BukaKoneksi()
+            Dim da As New MySqlDataAdapter("SELECT kode_barang, nama_barang, satuan FROM barang WHERE nama_barang LIKE @cari OR kode_barang LIKE @cari", conn)
+            da.SelectCommand.Parameters.AddWithValue("@cari", "%" & txtCari.Text.Trim() & "%")
+            Dim dt As New DataTable
+            da.Fill(dt)
+            dgvCari.DataSource = dt
+            dgvCari.Columns("kode_barang").HeaderText = "Kode"
+            dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
+            dgvCari.Columns("satuan").HeaderText = "Satuan"
+        Catch ex As Exception
+            MsgBox("Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvCari_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvCari.CellClick
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = dgvCari.Rows(e.RowIndex)
+            txtKode.Text = row.Cells("kode_barang").Value.ToString()
+            txtBarang.Text = row.Cells("nama_barang").Value.ToString()
+            txtSatuan.Text = row.Cells("satuan").Value.ToString()
+            txtJumlah.Focus()
+            pnCari.Visible = False
+        End If
+    End Sub
 End Class
