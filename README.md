@@ -4,13 +4,17 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 
 ## Fitur Utama
 
-- **Login & Register:** User diperkenankan untuk login/daftar terlebih dahulu
+- **Login & Register:** User diperkenankan untuk login/daftar terlebih dahulu.
+- **Dashboard:** Tampilan di halaman utama.
+- **Informasi Tanggal & Waktu:** Tanggal dan waktu real-time ditampilkan di menu utama.
 - **Manajemen Karyawan:** Tambah, ubah, dan hapus data karyawan.
 - **Manajemen Barang:** Kelola data barang yang tersedia di inventaris.
 - **Transaksi Barang Masuk:** Catat barang yang masuk ke dalam inventaris.
 - **Transaksi Barang Keluar:** Catat barang yang keluar dari inventaris.
+- **Pencarian & Filter Data:** Cari dan filter data karyawan/barang/transaksi dengan mudah.
+- **Notifikasi Stok Minimum:** Peringatan otomatis jika stok barang di bawah batas minimum.
+- **Print:** Print data transaksi ke printer.
 - **Laporan:** Lihat dan cetak laporan transaksi.
-- **Informasi Tanggal & Waktu:** Tanggal dan waktu real-time ditampilkan di menu utama.
 - **Tentang Aplikasi:** Informasi mengenai aplikasi.
 - **Logout & Exit:** Fitur keluar dari aplikasi dan logout akun.
 
@@ -22,12 +26,13 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 4. Jalankan aplikasi
 
 ## Database
+
 ### Users
 
 ```sql
 CREATE DATABASE vbnet_managementapp;
 
-USE vbnet_managementapp;
+USE vbnet_projectuas;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,7 +44,7 @@ CREATE TABLE users (
 ### Karyawan
 
 ```sql
-USE vbnet_managementapp;
+USE vbnet_projectuas;
 
 CREATE TABLE karyawan (
     nik VARCHAR(20) PRIMARY KEY,
