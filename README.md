@@ -76,7 +76,19 @@ CREATE TABLE transaksi_masuk (
     FOREIGN KEY (kode_barang) REFERENCES barang(kode_barang)
 );
 ```
-
+### Transaksi_keluar
+```sql
+CREATE TABLE transaksi_keluar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kode_barang VARCHAR(50),
+    nama_barang VARCHAR(100),
+    satuan VARCHAR(20),
+    harga_satuan INT,
+    qty INT,
+    total INT,
+    tanggal DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 
 ## Cara Penggunaan
