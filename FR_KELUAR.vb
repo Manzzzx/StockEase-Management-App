@@ -1,7 +1,6 @@
 ﻿Imports MySql.Data.MySqlClient
 
 Public Class FR_KELUAR
-    ' Constants
     Private Const DEFAULT_KODE_PREFIX As String = "BRG0"
     Private Const CURRENCY_FORMAT As String = "Rp {0:N0}"
 
@@ -71,7 +70,6 @@ Public Class FR_KELUAR
     Private Function ReserveStock(productCode As String, quantity As Integer) As Boolean
         Try
             BukaKoneksi()
-            ' Kurangi stok di transaksi_masuk
             Dim query As String = "UPDATE transaksi_masuk SET jumlah = jumlah - @qty WHERE kode_barang = @kode AND jumlah >= @qty LIMIT 1"
             Using cmd As New MySqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@qty", quantity)
@@ -90,7 +88,6 @@ Public Class FR_KELUAR
     Private Function ReleaseStock(productCode As String, quantity As Integer) As Boolean
         Try
             BukaKoneksi()
-            ' Tambah kembali stok di transaksi_masuk
             Dim query As String = "UPDATE transaksi_masuk SET jumlah = jumlah + @qty WHERE kode_barang = @kode LIMIT 1"
             Using cmd As New MySqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@qty", quantity)
@@ -144,9 +141,8 @@ Public Class FR_KELUAR
         Dim productCode As String = txtKode.Text.Trim
         Dim existingRow As DataGridViewRow = FindProductInGrid(productCode)
 
-        ' Reserve stock first
         If Not ReserveStock(productCode, quantity) Then
-            ShowWarningMessage("Gagal mereservasi stok untuk produk ini!")
+            ShowWarningMessage("Gagal mengabil stok untuk produk ini!")
             Return False
         End If
 
@@ -192,7 +188,7 @@ Public Class FR_KELUAR
     '===============[ Validation ]===============
     Private Function IsValidProductInput() As Boolean
         If String.IsNullOrWhiteSpace(txtKode.Text) OrElse String.IsNullOrWhiteSpace(txtBarang.Text) Then
-            ShowWarningMessage("Lengkapi data barang terlebih dahulu.")
+            ShowWarningMessage("Lengkapi data terlebih dahulu.")
             Return False
         End If
         Return True
@@ -235,7 +231,6 @@ Public Class FR_KELUAR
 
         Dim price As Decimal = Decimal.Parse(txtHarga.Text)
 
-        ' Try to add/update product in grid (includes stock reservation)
         If AddOrUpdateProductInGrid(quantity, price) Then
             UpdateTotalAmount()
             ResetProductInput()
@@ -254,12 +249,10 @@ Public Class FR_KELUAR
         Dim newQuantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
         Dim productCode As String = row.Cells("Kode").Value.ToString()
 
-        ' Get old quantity to calculate difference
         Dim oldQuantity As Integer = GetOldQuantityFromGrid(productCode, rowIndex)
         Dim quantityDifference As Integer = newQuantity - oldQuantity
 
         If quantityDifference > 0 Then
-            ' Need more stock - check availability and reserve
             Dim availableStock As Integer = GetAvailableStock(productCode)
             If quantityDifference > availableStock Then
                 ShowWarningMessage($"Melebihi stok! Stok tersedia: {availableStock}")
@@ -273,7 +266,6 @@ Public Class FR_KELUAR
             End If
 
         ElseIf quantityDifference < 0 Then
-            ' Return excess stock
             ReleaseStock(productCode, Math.Abs(quantityDifference))
         End If
 
@@ -282,15 +274,12 @@ Public Class FR_KELUAR
     End Sub
 
     Private Function GetOldQuantityFromGrid(productCode As String, currentRowIndex As Integer) As Integer
-        ' This is a simplified approach - in real implementation you might want to store original values
-        ' For now, we'll get the current database stock and calculate backwards
         Static originalQuantities As New Dictionary(Of String, Integer)
 
         If originalQuantities.ContainsKey($"{productCode}_{currentRowIndex}") Then
             Return originalQuantities($"{productCode}_{currentRowIndex}")
         End If
 
-        ' If not found, assume it's the first edit, return current value
         Dim currentQty As Integer = Convert.ToInt32(dgvTampil.Rows(currentRowIndex).Cells("Qty").Value)
         originalQuantities($"{productCode}_{currentRowIndex}") = currentQty
         Return currentQty
