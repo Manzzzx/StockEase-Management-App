@@ -146,6 +146,7 @@ Public Class FR_KELUAR
             End If
         Next
         lblHarga.Text = String.Format("Rp {0:N0}", sum)
+        txtTotalHarga.Text = lblHarga.Text
     End Sub
 
 
@@ -155,6 +156,10 @@ Public Class FR_KELUAR
             If result = DialogResult.Yes Then
                 dgvTampil.Rows.Remove(dgvTampil.SelectedRows(0))
                 UpdateTotalHarga() ' Supaya label total harga di sebelah kanan ikut berubah
+            End If
+            If dgvTampil.Rows.Count = 0 OrElse dgvTampil.Rows.Cast(Of DataGridViewRow)().All(Function(r) r.IsNewRow) Then
+                txtTunai.Text = ""
+                txtKembalian.Text = ""
             End If
         Else
             MessageBox.Show("Pilih baris yang ingin dihapus terlebih dahulu.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -294,4 +299,26 @@ Public Class FR_KELUAR
             pnCari.Visible = False
         End If
     End Sub
+
+    Private Sub txtTunai_TextChanged(sender As Object, e As EventArgs) Handles txtTunai.TextChanged
+        Dim total As Decimal = 0
+        Dim tunai As Decimal = 0
+
+        ' Ambil nilai total dari txtTotalHarga (atau lblHarga jika ingin parsing dari label)
+        Decimal.TryParse(txtTotalHarga.Text.Replace("Rp", "").Replace(".", "").Trim(), total)
+        Decimal.TryParse(txtTunai.Text, tunai)
+
+        If tunai >= total AndAlso total > 0 Then
+            txtKembalian.Text = String.Format("Rp {0:N0}", tunai - total)
+        Else
+            txtKembalian.Text = ""
+        End If
+    End Sub
+
+    Private Sub txtTunai_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtTunai.KeyPress
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
 End Class

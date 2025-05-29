@@ -25,6 +25,13 @@ Partial Class FR_KELUAR
         components = New ComponentModel.Container()
         Panel1 = New Panel()
         GroupBox3 = New GroupBox()
+        txtKembalian = New TextBox()
+        txtTunai = New TextBox()
+        btnBayar = New Button()
+        txtTotalHarga = New TextBox()
+        Label8 = New Label()
+        Label7 = New Label()
+        Label6 = New Label()
         GroupBox2 = New GroupBox()
         lblHarga = New Label()
         GroupBox1 = New GroupBox()
@@ -46,7 +53,6 @@ Partial Class FR_KELUAR
         Panel2 = New Panel()
         btnMinimize = New Button()
         btnMenu = New Button()
-        btnBayar = New Button()
         dgvTampil = New DataGridView()
         Kode = New DataGridViewTextBoxColumn()
         Barang = New DataGridViewTextBoxColumn()
@@ -57,6 +63,7 @@ Partial Class FR_KELUAR
         ContextMenuStrip1 = New ContextMenuStrip(components)
         HapusToolStripMenuItem = New ToolStripMenuItem()
         Panel1.SuspendLayout()
+        GroupBox3.SuspendLayout()
         GroupBox2.SuspendLayout()
         GroupBox1.SuspendLayout()
         pnCari.SuspendLayout()
@@ -79,6 +86,13 @@ Partial Class FR_KELUAR
         ' 
         ' GroupBox3
         ' 
+        GroupBox3.Controls.Add(txtKembalian)
+        GroupBox3.Controls.Add(txtTunai)
+        GroupBox3.Controls.Add(btnBayar)
+        GroupBox3.Controls.Add(txtTotalHarga)
+        GroupBox3.Controls.Add(Label8)
+        GroupBox3.Controls.Add(Label7)
+        GroupBox3.Controls.Add(Label6)
         GroupBox3.Dock = DockStyle.Fill
         GroupBox3.Font = New Font("Segoe UI", 10.125F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         GroupBox3.Location = New Point(604, 0)
@@ -87,6 +101,64 @@ Partial Class FR_KELUAR
         GroupBox3.TabIndex = 2
         GroupBox3.TabStop = False
         GroupBox3.Text = "Pembayaran"
+        ' 
+        ' txtKembalian
+        ' 
+        txtKembalian.Location = New Point(233, 274)
+        txtKembalian.Name = "txtKembalian"
+        txtKembalian.ReadOnly = True
+        txtKembalian.Size = New Size(399, 43)
+        txtKembalian.TabIndex = 5
+        ' 
+        ' txtTunai
+        ' 
+        txtTunai.Location = New Point(233, 177)
+        txtTunai.Name = "txtTunai"
+        txtTunai.Size = New Size(399, 43)
+        txtTunai.TabIndex = 4
+        ' 
+        ' btnBayar
+        ' 
+        btnBayar.Location = New Point(669, 63)
+        btnBayar.Name = "btnBayar"
+        btnBayar.Size = New Size(174, 63)
+        btnBayar.TabIndex = 0
+        btnBayar.Text = "Bayar"
+        btnBayar.UseVisualStyleBackColor = True
+        ' 
+        ' txtTotalHarga
+        ' 
+        txtTotalHarga.Location = New Point(233, 73)
+        txtTotalHarga.Name = "txtTotalHarga"
+        txtTotalHarga.Size = New Size(399, 43)
+        txtTotalHarga.TabIndex = 3
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Location = New Point(58, 274)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(143, 37)
+        Label8.TabIndex = 2
+        Label8.Text = "Kembalian"
+        ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Location = New Point(58, 175)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(82, 37)
+        Label7.TabIndex = 1
+        Label7.Text = "Tunai"
+        ' 
+        ' Label6
+        ' 
+        Label6.AutoSize = True
+        Label6.Location = New Point(58, 76)
+        Label6.Name = "Label6"
+        Label6.Size = New Size(153, 37)
+        Label6.TabIndex = 0
+        Label6.Text = "Total Harga"
         ' 
         ' GroupBox2
         ' 
@@ -154,7 +226,7 @@ Partial Class FR_KELUAR
         btnCari.Name = "btnCari"
         btnCari.Size = New Size(150, 39)
         btnCari.TabIndex = 8
-        btnCari.Text = "Cari (F1)"
+        btnCari.Text = "Cari"
         btnCari.UseVisualStyleBackColor = True
         ' 
         ' txtHarga
@@ -231,7 +303,7 @@ Partial Class FR_KELUAR
         pnCari.Controls.Add(txtCari)
         pnCari.Location = New Point(0, 397)
         pnCari.Name = "pnCari"
-        pnCari.Size = New Size(843, 394)
+        pnCari.Size = New Size(896, 416)
         pnCari.TabIndex = 3
         pnCari.Visible = False
         ' 
@@ -242,16 +314,16 @@ Partial Class FR_KELUAR
         dgvCari.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvCari.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvCari.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dgvCari.ColumnHeadersVisible = False
         dgvCari.Location = New Point(23, 81)
         dgvCari.Name = "dgvCari"
+        dgvCari.RowHeadersVisible = False
         dgvCari.RowHeadersWidth = 82
-        dgvCari.Size = New Size(802, 286)
+        dgvCari.Size = New Size(846, 307)
         dgvCari.TabIndex = 2
         ' 
         ' btnTutup
         ' 
-        btnTutup.Location = New Point(687, 18)
+        btnTutup.Location = New Point(731, 18)
         btnTutup.Name = "btnTutup"
         btnTutup.Size = New Size(138, 43)
         btnTutup.TabIndex = 1
@@ -262,14 +334,13 @@ Partial Class FR_KELUAR
         ' 
         txtCari.Location = New Point(23, 18)
         txtCari.Name = "txtCari"
-        txtCari.Size = New Size(646, 39)
+        txtCari.Size = New Size(687, 39)
         txtCari.TabIndex = 0
         ' 
         ' Panel2
         ' 
         Panel2.Controls.Add(btnMinimize)
         Panel2.Controls.Add(btnMenu)
-        Panel2.Controls.Add(btnBayar)
         Panel2.Dock = DockStyle.Bottom
         Panel2.Location = New Point(0, 1147)
         Panel2.Name = "Panel2"
@@ -278,7 +349,7 @@ Partial Class FR_KELUAR
         ' 
         ' btnMinimize
         ' 
-        btnMinimize.Location = New Point(499, 32)
+        btnMinimize.Location = New Point(287, 32)
         btnMinimize.Name = "btnMinimize"
         btnMinimize.Size = New Size(176, 70)
         btnMinimize.TabIndex = 2
@@ -287,21 +358,12 @@ Partial Class FR_KELUAR
         ' 
         ' btnMenu
         ' 
-        btnMenu.Location = New Point(238, 32)
+        btnMenu.Location = New Point(30, 32)
         btnMenu.Name = "btnMenu"
         btnMenu.Size = New Size(228, 70)
         btnMenu.TabIndex = 1
         btnMenu.Text = "Kembali Ke Menu"
         btnMenu.UseVisualStyleBackColor = True
-        ' 
-        ' btnBayar
-        ' 
-        btnBayar.Location = New Point(30, 32)
-        btnBayar.Name = "btnBayar"
-        btnBayar.Size = New Size(176, 70)
-        btnBayar.TabIndex = 0
-        btnBayar.Text = "Bayar (F2)"
-        btnBayar.UseVisualStyleBackColor = True
         ' 
         ' dgvTampil
         ' 
@@ -389,6 +451,8 @@ Partial Class FR_KELUAR
         Text = "BARANG KELUAR"
         WindowState = FormWindowState.Maximized
         Panel1.ResumeLayout(False)
+        GroupBox3.ResumeLayout(False)
+        GroupBox3.PerformLayout()
         GroupBox2.ResumeLayout(False)
         GroupBox1.ResumeLayout(False)
         GroupBox1.PerformLayout()
@@ -435,4 +499,10 @@ Partial Class FR_KELUAR
     Friend WithEvents btnTutup As Button
     Friend WithEvents pnCari As Panel
     Friend WithEvents dgvCari As DataGridView
+    Friend WithEvents txtKembalian As TextBox
+    Friend WithEvents txtTunai As TextBox
+    Friend WithEvents txtTotalHarga As TextBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents Label7 As Label
+    Friend WithEvents Label6 As Label
 End Class
