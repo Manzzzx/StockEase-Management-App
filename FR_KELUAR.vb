@@ -1,267 +1,289 @@
 ﻿Imports MySql.Data.MySqlClient
+
 Public Class FR_KELUAR
-    Sub TampilSemuaBarang()
+    ' Constants
+    Private Const DEFAULT_KODE As String = "BRG0"
+    Private Const CURRENCY_FORMAT As String = "Rp {0:N0}"
+
+    '===============[ Form Events ]===============
+    Private Sub FR_KELUAR_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        InitializeEventHandlers()
+        ResetProductInput()
+    End Sub
+
+    Private Sub InitializeEventHandlers()
+        AddHandler txtJumlah.KeyDown, AddressOf txtJumlah_KeyDown
+        AddHandler dgvTampil.CellEndEdit, AddressOf dgvTampil_CellEndEdit
+        AddHandler dgvTampil.EditingControlShowing, AddressOf dgvTampil_EditingControlShowing
+    End Sub
+
+    '===============[ Helper Methods - UI Management ]===============
+    Private Sub ClearProductInputs()
+        txtBarang.Clear()
+        txtSatuan.Clear()
+        txtHarga.Clear()
+    End Sub
+
+    Private Sub ResetProductInput()
+        txtKode.Text = DEFAULT_KODE
+        txtKode.SelectionStart = txtKode.Text.Length
+        ClearProductInputs()
+        txtJumlah.Clear()
+        txtKode.Focus()
+    End Sub
+
+    Private Sub UpdateTotalAmount()
+        Dim totalSum As Decimal = CalculateGridTotal()
+        lblHarga.Text = String.Format(CURRENCY_FORMAT, totalSum)
+        txtTotalHarga.Text = lblHarga.Text
+    End Sub
+
+    Private Function CalculateGridTotal() As Decimal
+        Return dgvTampil.Rows.Cast(Of DataGridViewRow)() _
+            .Where(Function(r) r.Cells("Total").Value IsNot Nothing) _
+            .Sum(Function(r) Convert.ToDecimal(r.Cells("Total").Value))
+    End Function
+
+    '===============[ Stock Management ]===============
+    Private Function GetAvailableStock(productCode As String) As Integer
+        Dim stockIn As Integer = GetStockFromDatabase("transaksi_masuk", "jumlah", productCode)
+        Dim stockOut As Integer = GetStockFromDatabase("transaksi_keluar", "qty", productCode)
+        Dim pendingStock As Integer = GetPendingStockFromGrid(productCode)
+
+        Return (stockIn - stockOut) - pendingStock
+    End Function
+
+    Private Function GetStockFromDatabase(tableName As String, columnName As String, productCode As String) As Integer
         Try
             BukaKoneksi()
-            Dim da As New MySqlDataAdapter("SELECT kode_barang, nama_barang, satuan FROM barang", conn)
-            Dim dt As New DataTable
-            da.Fill(dt)
-            dgvCari.DataSource = dt
-            dgvCari.Columns("kode_barang").HeaderText = "Kode"
-            dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
-            dgvCari.Columns("satuan").HeaderText = "Satuan"
+            Dim query As String = $"SELECT COALESCE(SUM({columnName}),0) FROM {tableName} WHERE kode_barang = @kode"
+            Using cmd As New MySqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@kode", productCode)
+                Return Convert.ToInt32(cmd.ExecuteScalar())
+            End Using
         Catch ex As Exception
-            MsgBox("Error: " & ex.Message)
+            ShowErrorMessage("Gagal mengambil stok: " & ex.Message)
+            Return 0
+        Finally
+            conn.Close()
         End Try
-    End Sub
-    Private Sub btnMenu_Click(sender As Object, e As EventArgs) Handles btnMenu.Click
-        Dim fr As New FR_MENU
-        fr.Show()
-        Me.Close()
-    End Sub
+    End Function
 
-    Private Sub btnMinimize_Click(sender As Object, e As EventArgs) Handles btnMinimize.Click
-        Me.WindowState = FormWindowState.Minimized
-    End Sub
+    Private Function GetPendingStockFromGrid(productCode As String) As Integer
+        Return dgvTampil.Rows.Cast(Of DataGridViewRow)() _
+            .Where(Function(r) r.Cells("Kode").Value?.ToString() = productCode) _
+            .Sum(Function(r) Convert.ToInt32(r.Cells("Qty").Value))
+    End Function
 
-    Private Sub txtKode_TextChanged(sender As Object, e As EventArgs) Handles txtKode.TextChanged
-        If txtKode.Text.Trim = "" Then
-            txtBarang.Clear()
-            txtSatuan.Clear()
-            txtHarga.Clear()
+    '===============[ Product Data Management ]===============
+    Private Sub LoadProductData(productCode As String)
+        If String.IsNullOrWhiteSpace(productCode) Then
+            ClearProductInputs()
             Return
         End If
 
         Try
             BukaKoneksi()
-            Dim cmd As New MySqlCommand("SELECT nama_barang, satuan, harga_satuan FROM barang WHERE kode_barang = @kode", conn)
-            cmd.Parameters.AddWithValue("@kode", txtKode.Text.Trim)
-
-            Using rd As MySqlDataReader = cmd.ExecuteReader()
-                If rd.Read() Then
-                    txtBarang.Text = rd("nama_barang").ToString()
-                    txtSatuan.Text = rd("satuan").ToString()
-                    txtHarga.Text = rd("harga_satuan").ToString()
-                    rd.Close()
-                    If False Then
-                        MessageBox.Show("Stok barang tidak mencukupi.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        txtKode.Clear()
-                        txtBarang.Clear()
-                        txtSatuan.Clear()
-                        txtHarga.Clear()
-                        txtKode.Focus()
+            Dim query As String = "SELECT nama_barang, satuan, harga_satuan FROM barang WHERE kode_barang = @kode"
+            Using cmd As New MySqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@kode", productCode.Trim)
+                Using reader As MySqlDataReader = cmd.ExecuteReader()
+                    If reader.Read() Then
+                        SetProductData(reader)
+                    Else
+                        ClearProductInputs()
                     End If
-                Else
-                    txtBarang.Clear()
-                    txtSatuan.Clear()
-                    txtHarga.Clear()
-                End If
+                End Using
             End Using
         Catch ex As Exception
-            MsgBox("Terjadi kesalahan saat mengambil data barang: " & ex.Message)
+            ShowErrorMessage("Terjadi kesalahan saat mengambil data barang: " & ex.Message)
         Finally
             conn.Close()
         End Try
     End Sub
 
-    Private Sub FR_KELUAR_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        AddHandler txtJumlah.KeyDown, AddressOf txtJumlah_KeyDown
-        AddHandler dgvTampil.CellEndEdit, AddressOf dgvTampil_CellEndEdit
-        AddHandler dgvTampil.EditingControlShowing, AddressOf dgvTampil_EditingControlShowing
+    Private Sub SetProductData(reader As MySqlDataReader)
+        txtBarang.Text = reader("nama_barang").ToString()
+        txtSatuan.Text = reader("satuan").ToString()
+        txtHarga.Text = reader("harga_satuan").ToString()
+    End Sub
 
-        txtKode.Text = "BRG0"
-        txtKode.SelectionStart = txtKode.Text.Length
-        txtKode.SelectionLength = 0
+    '===============[ Grid Management ]===============
+    Private Sub AddOrUpdateProductInGrid(quantity As Integer, price As Decimal)
+        Dim existingRow As DataGridViewRow = FindProductInGrid(txtKode.Text.Trim)
+
+        If existingRow IsNot Nothing Then
+            UpdateExistingProductRow(existingRow, quantity, price)
+        Else
+            AddNewProductRow(quantity, price)
+        End If
+    End Sub
+
+    Private Function FindProductInGrid(productCode As String) As DataGridViewRow
+        Return dgvTampil.Rows.Cast(Of DataGridViewRow)() _
+            .FirstOrDefault(Function(r) r.Cells("Kode").Value?.ToString() = productCode)
+    End Function
+
+    Private Sub UpdateExistingProductRow(row As DataGridViewRow, additionalQuantity As Integer, price As Decimal)
+        Dim newQuantity As Integer = Convert.ToInt32(row.Cells("Qty").Value) + additionalQuantity
+        row.Cells("Qty").Value = newQuantity
+        row.Cells("Total").Value = price * newQuantity
+    End Sub
+
+    Private Sub AddNewProductRow(quantity As Integer, price As Decimal)
+        Dim total As Decimal = price * quantity
+        dgvTampil.Rows.Add(txtKode.Text, txtBarang.Text, txtSatuan.Text, price, quantity, total)
+    End Sub
+
+    '===============[ Validation ]===============
+    Private Function IsValidProductInput() As Boolean
+        If String.IsNullOrWhiteSpace(txtKode.Text) OrElse String.IsNullOrWhiteSpace(txtBarang.Text) Then
+            ShowWarningMessage("Lengkapi data barang terlebih dahulu.")
+            Return False
+        End If
+        Return True
+    End Function
+
+    Private Function GetValidQuantity() As Integer
+        Dim quantity As Integer
+        If Integer.TryParse(txtJumlah.Text, quantity) AndAlso quantity > 0 Then
+            Return quantity
+        End If
+        Return 1
+    End Function
+
+    Private Function IsStockSufficient(requestedQuantity As Integer, productCode As String) As Boolean
+        Dim availableStock As Integer = GetAvailableStock(productCode)
+        If requestedQuantity > availableStock Then
+            ShowWarningMessage($"Melebihi stok! Stok tersedia: {availableStock}")
+            txtJumlah.Focus()
+            txtJumlah.SelectAll()
+            Return False
+        End If
+        Return True
+    End Function
+
+    '===============[ Event Handlers - Product Input ]===============
+    Private Sub txtKode_TextChanged(sender As Object, e As EventArgs) Handles txtKode.TextChanged
+        LoadProductData(txtKode.Text)
     End Sub
 
     Private Sub txtJumlah_KeyDown(sender As Object, e As KeyEventArgs)
-        If e.KeyCode = Keys.Enter Then
-            ' Validasi input
-            If txtKode.Text.Trim = "" OrElse txtBarang.Text.Trim = "" OrElse txtSatuan.Text.Trim = "" OrElse txtHarga.Text.Trim = "" Then
-                MessageBox.Show("Lengkapi data barang terlebih dahulu.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                Return
-            End If
-
-            ' Ambil dan validasi jumlah
-            Dim qty As Integer = 1
-            If Not String.IsNullOrWhiteSpace(txtJumlah.Text) Then
-                Integer.TryParse(txtJumlah.Text, qty)
-                If qty <= 0 Then qty = 1
-            End If
-
-            ' Cek stok
-            Dim stok_tersedia As Integer = cari_stok(txtKode.Text.Trim)
-            If qty > stok_tersedia Then
-                MessageBox.Show("Melebihi stok! Stok tersedia: " & stok_tersedia, "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                txtJumlah.Focus()
-                txtJumlah.SelectAll()
-                Return
-            End If
-
-            ' Hitung total harga
-            Dim harga As Decimal
-            Decimal.TryParse(txtHarga.Text, harga)
-            Dim total As Decimal = harga * qty
-
-            ' Tambahkan atau update baris di DataGridView
-            Dim found As Boolean = False
-            For Each row As DataGridViewRow In dgvTampil.Rows
-                If row.Cells("Kode").Value IsNot Nothing AndAlso row.Cells("Kode").Value.ToString() = txtKode.Text.Trim Then
-                    Dim currentQty As Integer = Convert.ToInt32(row.Cells("Qty").Value)
-                    currentQty += qty
-                    row.Cells("Qty").Value = currentQty
-                    row.Cells("Total").Value = harga * currentQty
-                    found = True
-                    Exit For
-                End If
-            Next
-
-            If Not found Then
-                dgvTampil.Rows.Add(txtKode.Text, txtBarang.Text, txtSatuan.Text, harga, qty, total)
-            End If
-
-            ' Update total harga semua barang
-            UpdateTotalHarga()
-
-            ' Reset input
-            txtKode.Text = "BRG0"
-            txtKode.SelectionStart = txtKode.Text.Length
-            txtBarang.Clear()
-            txtSatuan.Clear()
-            txtHarga.Clear()
-            txtJumlah.Clear()
-            txtKode.Focus()
-        End If
+        If e.KeyCode <> Keys.Enter Then Return
+        ProcessProductEntry()
     End Sub
 
+    Private Sub ProcessProductEntry()
+        If Not IsValidProductInput() Then Return
 
-    Private Sub UpdateTotalHarga()
-        Dim sum As Decimal = 0
-        For Each row As DataGridViewRow In dgvTampil.Rows
-            If row.Cells("Total").Value IsNot Nothing Then
-                Dim val As Decimal
-                If Decimal.TryParse(row.Cells("Total").Value.ToString(), val) Then
-                    sum += val
-                End If
-            End If
-        Next
-        lblHarga.Text = String.Format("Rp {0:N0}", sum)
-        txtTotalHarga.Text = lblHarga.Text
+        Dim quantity As Integer = GetValidQuantity()
+        If Not IsStockSufficient(quantity, txtKode.Text.Trim) Then Return
+
+        Dim price As Decimal = Decimal.Parse(txtHarga.Text)
+        AddOrUpdateProductInGrid(quantity, price)
+        UpdateTotalAmount()
+        ResetProductInput()
     End Sub
 
-
-    Private Sub HapusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles HapusToolStripMenuItem.Click
-        If dgvTampil.SelectedRows.Count > 0 Then
-            Dim result As DialogResult = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-            If result = DialogResult.Yes Then
-                dgvTampil.Rows.Remove(dgvTampil.SelectedRows(0))
-                UpdateTotalHarga() ' Supaya label total harga di sebelah kanan ikut berubah
-            End If
-            If dgvTampil.Rows.Count = 0 OrElse dgvTampil.Rows.Cast(Of DataGridViewRow)().All(Function(r) r.IsNewRow) Then
-                txtTunai.Text = ""
-                txtKembalian.Text = ""
-            End If
-        Else
-            MessageBox.Show("Pilih baris yang ingin dihapus terlebih dahulu.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-    End Sub
-
-
+    '===============[ Event Handlers - Grid Editing ]===============
     Private Sub dgvTampil_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs)
-        ' Jika kolom Qty yang diedit
-        If dgvTampil.Columns(e.ColumnIndex).Name = "Qty" Then
-            Dim row As DataGridViewRow = dgvTampil.Rows(e.RowIndex)
-            Dim harga As Decimal
-            Dim qty As Integer
+        If dgvTampil.Columns(e.ColumnIndex).Name <> "Qty" Then Return
+        ValidateAndUpdateGridRow(e.RowIndex)
+    End Sub
 
-            Decimal.TryParse(row.Cells("Harga").Value.ToString(), harga)
-            Integer.TryParse(row.Cells("Qty").Value.ToString(), qty)
+    Private Sub ValidateAndUpdateGridRow(rowIndex As Integer)
+        Dim row As DataGridViewRow = dgvTampil.Rows(rowIndex)
+        Dim price As Decimal = Convert.ToDecimal(row.Cells("Harga").Value)
+        Dim quantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
+        Dim productCode As String = row.Cells("Kode").Value.ToString()
 
-            ' Ambil kode barang dari baris yang diedit
-            Dim kodeBarang As String = row.Cells("Kode").Value.ToString()
-
-            ' Hitung stok yang tersedia dengan mengurangi qty baris yang sedang diedit
-            Dim stok_tersedia As Integer = cari_stok(kodeBarang) + qty
-
-            If qty > stok_tersedia Then
-                MessageBox.Show("Melebihi stok! Stok tersedia: " & stok_tersedia, "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                row.Cells("Qty").Value = stok_tersedia
-                qty = stok_tersedia
-            End If
-
-            row.Cells("Total").Value = harga * qty
-            UpdateTotalHarga()
+        ' Validate stock (add current quantity back to available stock for validation)
+        Dim availableStock As Integer = GetAvailableStock(productCode) + quantity
+        If quantity > availableStock Then
+            ShowWarningMessage($"Melebihi stok! Stok tersedia: {availableStock}")
+            row.Cells("Qty").Value = availableStock
+            quantity = availableStock
         End If
+
+        row.Cells("Total").Value = price * quantity
+        UpdateTotalAmount()
     End Sub
 
     Private Sub dgvTampil_EditingControlShowing(sender As Object, e As DataGridViewEditingControlShowingEventArgs) Handles dgvTampil.EditingControlShowing
         If dgvTampil.CurrentCell.ColumnIndex = dgvTampil.Columns("Qty").Index Then
-            Dim tb As TextBox = TryCast(e.Control, TextBox)
-            If tb IsNot Nothing Then
-                RemoveHandler tb.KeyPress, AddressOf QtyColumn_KeyPress
-                AddHandler tb.KeyPress, AddressOf QtyColumn_KeyPress
-            End If
+            AttachNumericValidationToTextBox(e.Control)
         End If
     End Sub
 
-    Private Sub dgvTampil_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvTampil.CellMouseDown
-        If e.Button = MouseButtons.Right AndAlso e.RowIndex >= 0 Then
-            dgvTampil.ClearSelection()
-            dgvTampil.Rows(e.RowIndex).Selected = True
+    Private Sub AttachNumericValidationToTextBox(control As Control)
+        Dim textBox As TextBox = TryCast(control, TextBox)
+        If textBox IsNot Nothing Then
+            RemoveHandler textBox.KeyPress, AddressOf QtyColumn_KeyPress
+            AddHandler textBox.KeyPress, AddressOf QtyColumn_KeyPress
         End If
     End Sub
 
     Private Sub QtyColumn_KeyPress(sender As Object, e As KeyPressEventArgs)
-        ' Hanya izinkan angka dan tombol kontrol (backspace, delete, dll)
         If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
             e.Handled = True
         End If
     End Sub
 
-    Private Function cari_stok(ByVal kode As String) As Integer
-        Dim stok_masuk As Integer = 0
-        Dim stok_keluar As Integer = 0
+    '===============[ Event Handlers - Context Menu ]===============
+    Private Sub HapusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles HapusToolStripMenuItem.Click
+        If Not HasSelectedRow() Then
+            ShowInfoMessage("Pilih baris yang ingin dihapus terlebih dahulu.")
+            Return
+        End If
 
-        Try
-            BukaKoneksi()
-            ' Hitung jumlah masuk
-            Dim cmdMasuk As New MySqlCommand("SELECT COALESCE(SUM(jumlah),0) FROM transaksi_masuk WHERE kode_barang = @kode", conn)
-            cmdMasuk.Parameters.AddWithValue("@kode", kode)
-            stok_masuk = Convert.ToInt32(cmdMasuk.ExecuteScalar())
+        If ConfirmDeletion() Then
+            DeleteSelectedRow()
+            UpdateTotalAmount()
+            ClearPaymentIfNoItems()
+        End If
+    End Sub
 
-            ' Cek apakah tabel transaksi_keluar ada dan kolom jumlah ada
-            ' Jika tidak ada, stok_keluar tetap 0
-            Try
-                Dim cmdKeluar As New MySqlCommand("SELECT COALESCE(SUM(jumlah),0) FROM transaksi_keluar WHERE kode_barang = @kode", conn)
-                cmdKeluar.Parameters.AddWithValue("@kode", kode)
-                stok_keluar = Convert.ToInt32(cmdKeluar.ExecuteScalar())
-            Catch ex2 As Exception
-                stok_keluar = 0
-            End Try
-        Catch ex As Exception
-            MessageBox.Show("Gagal mengambil stok: " & ex.Message)
-        Finally
-            conn.Close()
-        End Try
-
-        ' Hitung qty yang sudah diinput user di dgvTampil
-        Dim stok_order As Integer = 0
-        For Each row As DataGridViewRow In dgvTampil.Rows
-            If row.Cells("Kode").Value IsNot Nothing AndAlso row.Cells("Kode").Value.ToString() = kode Then
-                Dim qty As Integer = 0
-                Integer.TryParse(row.Cells("Qty").Value.ToString(), qty)
-                stok_order += qty
-            End If
-        Next
-
-        Return (stok_masuk - stok_keluar) - stok_order
+    Private Function HasSelectedRow() As Boolean
+        Return dgvTampil.SelectedRows.Count > 0
     End Function
 
+    Private Function ConfirmDeletion() As Boolean
+        Return MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi",
+                              MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes
+    End Function
+
+    Private Sub DeleteSelectedRow()
+        dgvTampil.Rows.Remove(dgvTampil.SelectedRows(0))
+    End Sub
+
+    Private Sub ClearPaymentIfNoItems()
+        If dgvTampil.Rows.Count = 0 Then
+            txtTunai.Clear()
+            txtKembalian.Clear()
+        End If
+    End Sub
+
+    Private Sub dgvTampil_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvTampil.CellMouseDown
+        If e.Button = MouseButtons.Right AndAlso e.RowIndex >= 0 Then
+            SelectRowOnRightClick(e.RowIndex)
+        End If
+    End Sub
+
+    Private Sub SelectRowOnRightClick(rowIndex As Integer)
+        dgvTampil.ClearSelection()
+        dgvTampil.Rows(rowIndex).Selected = True
+    End Sub
+
+    '===============[ Event Handlers - Search Panel ]===============
     Private Sub btnCari_Click(sender As Object, e As EventArgs) Handles btnCari.Click
+        ShowSearchPanel()
+    End Sub
+
+    Private Sub ShowSearchPanel()
         pnCari.Visible = True
-        txtCari.Text = ""
-        TampilSemuaBarang()
+        txtCari.Clear()
         txtCari.Focus()
+        LoadAllProducts()
     End Sub
 
     Private Sub btnTutup_Click(sender As Object, e As EventArgs) Handles btnTutup.Click
@@ -269,56 +291,122 @@ Public Class FR_KELUAR
     End Sub
 
     Private Sub txtCari_TextChanged(sender As Object, e As EventArgs) Handles txtCari.TextChanged
-        If txtCari.Text.Trim() = "" Then
+        If String.IsNullOrWhiteSpace(txtCari.Text) Then
             dgvCari.DataSource = Nothing
             Return
         End If
+        SearchProducts(txtCari.Text.Trim())
+    End Sub
 
+    Private Sub SearchProducts(searchTerm As String)
         Try
             BukaKoneksi()
-            Dim da As New MySqlDataAdapter("SELECT kode_barang, nama_barang, satuan FROM barang WHERE nama_barang LIKE @cari OR kode_barang LIKE @cari", conn)
-            da.SelectCommand.Parameters.AddWithValue("@cari", "%" & txtCari.Text.Trim() & "%")
-            Dim dt As New DataTable
-            da.Fill(dt)
-            dgvCari.DataSource = dt
-            dgvCari.Columns("kode_barang").HeaderText = "Kode"
-            dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
-            dgvCari.Columns("satuan").HeaderText = "Satuan"
+            Dim query As String = "SELECT kode_barang, nama_barang, satuan FROM barang WHERE nama_barang LIKE @cari OR kode_barang LIKE @cari"
+            Using adapter As New MySqlDataAdapter(query, conn)
+                adapter.SelectCommand.Parameters.AddWithValue("@cari", $"%{searchTerm}%")
+                Dim dataTable As New DataTable
+                adapter.Fill(dataTable)
+                dgvCari.DataSource = dataTable
+            End Using
         Catch ex As Exception
-            MsgBox("Error: " & ex.Message)
+            ShowErrorMessage("Error: " & ex.Message)
         End Try
     End Sub
 
     Private Sub dgvCari_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvCari.CellClick
         If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = dgvCari.Rows(e.RowIndex)
-            txtKode.Text = row.Cells("kode_barang").Value.ToString()
-            txtBarang.Text = row.Cells("nama_barang").Value.ToString()
-            txtSatuan.Text = row.Cells("satuan").Value.ToString()
-            txtJumlah.Focus()
-            pnCari.Visible = False
+            SelectProductFromSearch(e.RowIndex)
         End If
     End Sub
 
+    Private Sub SelectProductFromSearch(rowIndex As Integer)
+        With dgvCari.Rows(rowIndex)
+            txtKode.Text = .Cells("kode_barang").Value.ToString()
+            txtBarang.Text = .Cells("nama_barang").Value.ToString()
+            txtSatuan.Text = .Cells("satuan").Value.ToString()
+        End With
+        txtJumlah.Focus()
+        pnCari.Visible = False
+    End Sub
+
+    Private Sub LoadAllProducts()
+        Try
+            BukaKoneksi()
+            Dim query As String = "SELECT kode_barang, nama_barang, satuan FROM barang"
+            Using adapter As New MySqlDataAdapter(query, conn)
+                Dim dataTable As New DataTable
+                adapter.Fill(dataTable)
+                dgvCari.DataSource = dataTable
+            End Using
+        Catch ex As Exception
+            ShowErrorMessage("Error: " & ex.Message)
+        End Try
+    End Sub
+
+    '===============[ Event Handlers - Payment ]===============
     Private Sub txtTunai_TextChanged(sender As Object, e As EventArgs) Handles txtTunai.TextChanged
-        Dim total As Decimal = 0
-        Dim tunai As Decimal = 0
+        CalculateChange()
+    End Sub
 
-        ' Ambil nilai total dari txtTotalHarga (atau lblHarga jika ingin parsing dari label)
-        Decimal.TryParse(txtTotalHarga.Text.Replace("Rp", "").Replace(".", "").Trim(), total)
-        Decimal.TryParse(txtTunai.Text, tunai)
+    Private Sub CalculateChange()
+        Dim totalAmount As Decimal = GetTotalAmount()
+        Dim cashAmount As Decimal = GetCashAmount()
 
-        If tunai >= total AndAlso total > 0 Then
-            txtKembalian.Text = String.Format("Rp {0:N0}", tunai - total)
+        If IsValidPayment(cashAmount, totalAmount) Then
+            txtKembalian.Text = String.Format(CURRENCY_FORMAT, cashAmount - totalAmount)
         Else
             txtKembalian.Text = ""
         End If
     End Sub
 
+    Private Function GetTotalAmount() As Decimal
+        Dim amount As Decimal
+        Decimal.TryParse(txtTotalHarga.Text.Replace("Rp", "").Replace(".", "").Trim(), amount)
+        Return amount
+    End Function
+
+    Private Function GetCashAmount() As Decimal
+        Dim amount As Decimal
+        Decimal.TryParse(txtTunai.Text, amount)
+        Return amount
+    End Function
+
+    Private Function IsValidPayment(cashAmount As Decimal, totalAmount As Decimal) As Boolean
+        Return cashAmount >= totalAmount AndAlso totalAmount > 0
+    End Function
+
     Private Sub txtTunai_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtTunai.KeyPress
         If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
             e.Handled = True
         End If
+    End Sub
+
+    '===============[ Event Handlers - Navigation ]===============
+    Private Sub btnMenu_Click(sender As Object, e As EventArgs) Handles btnMenu.Click
+        NavigateToMenu()
+    End Sub
+
+    Private Sub NavigateToMenu()
+        Dim menuForm As New FR_MENU
+        menuForm.Show()
+        Me.Close()
+    End Sub
+
+    Private Sub btnMinimize_Click(sender As Object, e As EventArgs) Handles btnMinimize.Click
+        Me.WindowState = FormWindowState.Minimized
+    End Sub
+
+    '===============[ Message Helpers ]===============
+    Private Sub ShowErrorMessage(message As String)
+        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    End Sub
+
+    Private Sub ShowWarningMessage(message As String)
+        MessageBox.Show(message, "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+    End Sub
+
+    Private Sub ShowInfoMessage(message As String)
+        MessageBox.Show(message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
 End Class
