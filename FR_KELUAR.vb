@@ -2,7 +2,7 @@
 
 Public Class FR_KELUAR
     ' Constants
-    Private Const DEFAULT_KODE As String = "BRG0"
+    Private Const DEFAULT_KODE_PREFIX As String = "BRG0"
     Private Const CURRENCY_FORMAT As String = "Rp {0:N0}"
 
     '===============[ Form Events ]===============
@@ -25,7 +25,7 @@ Public Class FR_KELUAR
     End Sub
 
     Private Sub ResetProductInput()
-        txtKode.Text = DEFAULT_KODE
+        txtKode.Text = DEFAULT_KODE_PREFIX
         txtKode.SelectionStart = txtKode.Text.Length
         ClearProductInputs()
         txtJumlah.Clear()
@@ -48,9 +48,8 @@ Public Class FR_KELUAR
     Private Function GetAvailableStock(productCode As String) As Integer
         Dim stockIn As Integer = GetStockFromDatabase("transaksi_masuk", "jumlah", productCode)
         Dim stockOut As Integer = GetStockFromDatabase("transaksi_keluar", "qty", productCode)
-        Dim pendingStock As Integer = GetPendingStockFromGrid(productCode)
 
-        Return (stockIn - stockOut) - pendingStock
+        Return stockIn - stockOut
     End Function
 
     Private Function GetStockFromDatabase(tableName As String, columnName As String, productCode As String) As Integer
@@ -69,10 +68,42 @@ Public Class FR_KELUAR
         End Try
     End Function
 
-    Private Function GetPendingStockFromGrid(productCode As String) As Integer
-        Return dgvTampil.Rows.Cast(Of DataGridViewRow)() _
-            .Where(Function(r) r.Cells("Kode").Value?.ToString() = productCode) _
-            .Sum(Function(r) Convert.ToInt32(r.Cells("Qty").Value))
+    Private Function ReserveStock(productCode As String, quantity As Integer) As Boolean
+        Try
+            BukaKoneksi()
+            ' Kurangi stok di transaksi_masuk
+            Dim query As String = "UPDATE transaksi_masuk SET jumlah = jumlah - @qty WHERE kode_barang = @kode AND jumlah >= @qty LIMIT 1"
+            Using cmd As New MySqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@qty", quantity)
+                cmd.Parameters.AddWithValue("@kode", productCode)
+                Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+                Return rowsAffected > 0
+            End Using
+        Catch ex As Exception
+            ShowErrorMessage("Gagal mereservasi stok: " & ex.Message)
+            Return False
+        Finally
+            conn.Close()
+        End Try
+    End Function
+
+    Private Function ReleaseStock(productCode As String, quantity As Integer) As Boolean
+        Try
+            BukaKoneksi()
+            ' Tambah kembali stok di transaksi_masuk
+            Dim query As String = "UPDATE transaksi_masuk SET jumlah = jumlah + @qty WHERE kode_barang = @kode LIMIT 1"
+            Using cmd As New MySqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@qty", quantity)
+                cmd.Parameters.AddWithValue("@kode", productCode)
+                cmd.ExecuteNonQuery()
+                Return True
+            End Using
+        Catch ex As Exception
+            ShowErrorMessage("Gagal mengembalikan stok: " & ex.Message)
+            Return False
+        Finally
+            conn.Close()
+        End Try
     End Function
 
     '===============[ Product Data Management ]===============
@@ -109,15 +140,24 @@ Public Class FR_KELUAR
     End Sub
 
     '===============[ Grid Management ]===============
-    Private Sub AddOrUpdateProductInGrid(quantity As Integer, price As Decimal)
-        Dim existingRow As DataGridViewRow = FindProductInGrid(txtKode.Text.Trim)
+    Private Function AddOrUpdateProductInGrid(quantity As Integer, price As Decimal) As Boolean
+        Dim productCode As String = txtKode.Text.Trim
+        Dim existingRow As DataGridViewRow = FindProductInGrid(productCode)
+
+        ' Reserve stock first
+        If Not ReserveStock(productCode, quantity) Then
+            ShowWarningMessage("Gagal mereservasi stok untuk produk ini!")
+            Return False
+        End If
 
         If existingRow IsNot Nothing Then
             UpdateExistingProductRow(existingRow, quantity, price)
         Else
             AddNewProductRow(quantity, price)
         End If
-    End Sub
+
+        Return True
+    End Function
 
     Private Function FindProductInGrid(productCode As String) As DataGridViewRow
         Return dgvTampil.Rows.Cast(Of DataGridViewRow)() _
@@ -134,6 +174,20 @@ Public Class FR_KELUAR
         Dim total As Decimal = price * quantity
         dgvTampil.Rows.Add(txtKode.Text, txtBarang.Text, txtSatuan.Text, price, quantity, total)
     End Sub
+
+    Private Function RemoveProductFromGrid(row As DataGridViewRow) As Boolean
+        Dim productCode As String = row.Cells("Kode").Value.ToString()
+        Dim quantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
+
+        ' Release stock back to database
+        If ReleaseStock(productCode, quantity) Then
+            dgvTampil.Rows.Remove(row)
+            Return True
+        Else
+            ShowWarningMessage("Gagal mengembalikan stok ke database!")
+            Return False
+        End If
+    End Function
 
     '===============[ Validation ]===============
     Private Function IsValidProductInput() As Boolean
@@ -180,9 +234,12 @@ Public Class FR_KELUAR
         If Not IsStockSufficient(quantity, txtKode.Text.Trim) Then Return
 
         Dim price As Decimal = Decimal.Parse(txtHarga.Text)
-        AddOrUpdateProductInGrid(quantity, price)
-        UpdateTotalAmount()
-        ResetProductInput()
+
+        ' Try to add/update product in grid (includes stock reservation)
+        If AddOrUpdateProductInGrid(quantity, price) Then
+            UpdateTotalAmount()
+            ResetProductInput()
+        End If
     End Sub
 
     '===============[ Event Handlers - Grid Editing ]===============
@@ -194,20 +251,50 @@ Public Class FR_KELUAR
     Private Sub ValidateAndUpdateGridRow(rowIndex As Integer)
         Dim row As DataGridViewRow = dgvTampil.Rows(rowIndex)
         Dim price As Decimal = Convert.ToDecimal(row.Cells("Harga").Value)
-        Dim quantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
+        Dim newQuantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
         Dim productCode As String = row.Cells("Kode").Value.ToString()
 
-        ' Validate stock (add current quantity back to available stock for validation)
-        Dim availableStock As Integer = GetAvailableStock(productCode) + quantity
-        If quantity > availableStock Then
-            ShowWarningMessage($"Melebihi stok! Stok tersedia: {availableStock}")
-            row.Cells("Qty").Value = availableStock
-            quantity = availableStock
+        ' Get old quantity to calculate difference
+        Dim oldQuantity As Integer = GetOldQuantityFromGrid(productCode, rowIndex)
+        Dim quantityDifference As Integer = newQuantity - oldQuantity
+
+        If quantityDifference > 0 Then
+            ' Need more stock - check availability and reserve
+            Dim availableStock As Integer = GetAvailableStock(productCode)
+            If quantityDifference > availableStock Then
+                ShowWarningMessage($"Melebihi stok! Stok tersedia: {availableStock}")
+                row.Cells("Qty").Value = oldQuantity + availableStock
+                newQuantity = oldQuantity + availableStock
+                quantityDifference = availableStock
+            End If
+
+            If quantityDifference > 0 Then
+                ReserveStock(productCode, quantityDifference)
+            End If
+
+        ElseIf quantityDifference < 0 Then
+            ' Return excess stock
+            ReleaseStock(productCode, Math.Abs(quantityDifference))
         End If
 
-        row.Cells("Total").Value = price * quantity
+        row.Cells("Total").Value = price * newQuantity
         UpdateTotalAmount()
     End Sub
+
+    Private Function GetOldQuantityFromGrid(productCode As String, currentRowIndex As Integer) As Integer
+        ' This is a simplified approach - in real implementation you might want to store original values
+        ' For now, we'll get the current database stock and calculate backwards
+        Static originalQuantities As New Dictionary(Of String, Integer)
+
+        If originalQuantities.ContainsKey($"{productCode}_{currentRowIndex}") Then
+            Return originalQuantities($"{productCode}_{currentRowIndex}")
+        End If
+
+        ' If not found, assume it's the first edit, return current value
+        Dim currentQty As Integer = Convert.ToInt32(dgvTampil.Rows(currentRowIndex).Cells("Qty").Value)
+        originalQuantities($"{productCode}_{currentRowIndex}") = currentQty
+        Return currentQty
+    End Function
 
     Private Sub dgvTampil_EditingControlShowing(sender As Object, e As DataGridViewEditingControlShowingEventArgs) Handles dgvTampil.EditingControlShowing
         If dgvTampil.CurrentCell.ColumnIndex = dgvTampil.Columns("Qty").Index Then
@@ -237,9 +324,11 @@ Public Class FR_KELUAR
         End If
 
         If ConfirmDeletion() Then
-            DeleteSelectedRow()
-            UpdateTotalAmount()
-            ClearPaymentIfNoItems()
+            Dim selectedRow As DataGridViewRow = dgvTampil.SelectedRows(0)
+            If RemoveProductFromGrid(selectedRow) Then
+                UpdateTotalAmount()
+                ClearPaymentIfNoItems()
+            End If
         End If
     End Sub
 
@@ -251,10 +340,6 @@ Public Class FR_KELUAR
         Return MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi",
                               MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes
     End Function
-
-    Private Sub DeleteSelectedRow()
-        dgvTampil.Rows.Remove(dgvTampil.SelectedRows(0))
-    End Sub
 
     Private Sub ClearPaymentIfNoItems()
         If dgvTampil.Rows.Count = 0 Then
