@@ -1,22 +1,55 @@
-# Stock Ease Management App
+# Stock Ease Management App (VB.NET + MySQL)
 
 Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NET) yang memudahkan pengelolaan data karyawan, barang, transaksi barang masuk/keluar, serta pembuatan laporan.
 
+
 ## Fitur Utama
 
-- **Login & Register:** User diperkenankan untuk login/daftar terlebih dahulu.
-- **Dashboard:** Tampilan di halaman utama.
-- **Informasi Tanggal & Waktu:** Tanggal dan waktu real-time ditampilkan di menu utama.
-- **Manajemen Karyawan:** Tambah, ubah, dan hapus data karyawan.
-- **Manajemen Barang:** Kelola data barang yang tersedia di inventaris.
-- **Transaksi Barang Masuk:** Catat barang yang masuk ke dalam inventaris.
-- **Transaksi Barang Keluar:** Catat barang yang keluar dari inventaris.
-- **Pencarian & Filter Data:** Cari dan filter data karyawan/barang/transaksi dengan mudah.
-- **Notifikasi Stok Minimum:** Peringatan otomatis jika stok barang di bawah batas minimum.
-- **Print:** Print data transaksi ke printer.
-- **Laporan:** Lihat dan cetak laporan transaksi.
-- **Tentang Aplikasi:** Informasi mengenai aplikasi.
-- **Logout & Exit:** Fitur keluar dari aplikasi dan logout akun.
+- **Login & Register:**
+  - User diperkenankan untuk login/daftar terlebih dahulu.
+
+- **Dashboard:**
+  - Tampilan di halaman utama.
+
+- **Informasi Tanggal & Waktu:**
+  - Tanggal dan waktu real-time ditampilkan di menu utama.
+
+- **Manajemen Karyawan:**
+  - Tambah, ubah, dan hapus data karyawan.
+
+- **Manajemen Barang:**
+  - Tambah, edit, dan hapus data barang.
+
+- - **Transaksi Barang Masuk:**
+  - Input barang masuk, supplier, harga partai, dan jumlah.
+  - Pencarian barang.
+  - Paging data transaksi masuk.
+
+- **Transaksi Barang Keluar:**
+  - Input barang keluar, jumlah, dan harga satuan.
+  - Cek stok otomatis sebelum transaksi.
+  - Pencarian barang.
+  - Cetak nota transaksi (print/preview).
+  - Data transaksi keluar otomatis tersimpan ke database.
+
+- **Pencarian Data:**
+  - Pencarian barang, karyawan dan transaksi dengan fitur filter.
+
+- **Notifikasi Stok Minimum:**
+  - Peringatan otomatis jika stok barang di bawah batas minimum.
+
+- - **Print:**
+  - Print data transaksi ke printer.
+
+- - **Laporan:**
+  - Lihat dan cetak laporan transaksi.
+
+- - **Tentang Aplikasi:**
+  - Informasi mengenai aplikasi.
+
+- - - **Logout & Exit:**
+  - Fitur keluar dari aplikasi dan logout akun.
+
 
 ## Cara Instalasi
 
@@ -24,6 +57,7 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 2. Buka solution/project di Visual Studio 2022.
 3. Buat database terlebih dahulu
 4. Jalankan aplikasi
+
 
 ## Database
 
@@ -107,6 +141,7 @@ CREATE TABLE transaksi_keluar (
    - **Tentang:** Informasi aplikasi.
 3. Gunakan menu **Logout** untuk keluar dari sesi, atau **Exit** untuk menutup aplikasi.
 
+
 ## Struktur Menu
 
 - **Karyawan**
@@ -117,6 +152,7 @@ CREATE TABLE transaksi_keluar (
 - **Tentang**
 - **Logout**
 - **Exit**
+
 
 ## Kontribusi
 
