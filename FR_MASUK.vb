@@ -1,7 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 
 Public Class FR_MASUK
-    Private Const DEFAULT_PAGE_SIZE As Integer = 5
+    Private Const DEFAULT_PAGE_SIZE As Integer = 10
     Private Const DATE_FORMAT As String = "yyyy-MM-dd HH:mm:ss"
 
     Private currentPage As Integer = 1
@@ -304,6 +304,33 @@ Public Class FR_MASUK
 
     Private Sub dgvTampil_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvTampil.CellMouseDown
         HandleGridRightClick(e)
+    End Sub
+
+    Private Sub txtCari_TextChanged(sender As Object, e As EventArgs) Handles txtCari.TextChanged
+        SearchTransactionData(txtCari.Text)
+    End Sub
+
+    Private Sub SearchTransactionData(searchTerm As String)
+        If String.IsNullOrWhiteSpace(searchTerm) Then
+            LoadTransactionData()
+            Return
+        End If
+
+        Try
+            BukaKoneksi()
+            Dim sql As String = "SELECT id, kode_barang, nama_barang, satuan, jumlah, suplier, harga_partai, tanggal_masuk " &
+                                "FROM transaksi_masuk " &
+                                "WHERE kode_barang LIKE @cari OR nama_barang LIKE @cari " &
+                                "ORDER BY id ASC"
+            Using da As New MySqlDataAdapter(sql, conn)
+                da.SelectCommand.Parameters.AddWithValue("@cari", $"%{searchTerm.Trim()}%")
+                Dim dt As New DataTable
+                da.Fill(dt)
+                PopulateGrid(dt)
+            End Using
+        Catch ex As Exception
+            ShowErrorMessage("Gagal mencari data", ex.Message)
+        End Try
     End Sub
 #End Region
 

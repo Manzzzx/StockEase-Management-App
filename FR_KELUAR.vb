@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Drawing.Printing
+Imports MySql.Data.MySqlClient
 
 Public Class FR_KELUAR
     Private Const DEFAULT_KODE_PREFIX As String = "BRG0"
@@ -502,6 +503,136 @@ Public Class FR_KELUAR
         If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
             e.Handled = True
         End If
+    End Sub
+
+    Private Sub btnBayar_Click(sender As Object, e As EventArgs) Handles btnBayar.Click
+        SimpanTransaksiKeluar()
+        PrintNota()
+        dgvTampil.Rows.Clear()
+        UpdateTotalAmount()
+        ClearPaymentIfNoItems()
+    End Sub
+
+    Sub PrintNota()
+        If PrinterSettings.InstalledPrinters.Cast(Of String)().Contains("Printer") Then
+            nota.PrinterSettings.PrinterName = "Printer"
+            nota.Print()
+        Else
+            Dim previewDialog As New PrintPreviewDialog()
+            previewDialog.Document = nota
+            previewDialog.WindowState = FormWindowState.Maximized
+            previewDialog.ShowDialog()
+        End If
+    End Sub
+
+    Private Sub nota_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles nota.PrintPage
+        Dim font12 As New Font("Courier New", 12, FontStyle.Bold)
+        Dim font10 As New Font("Courier New", 10)
+        Dim font8 As New Font("Courier New", 8)
+        Dim brush As New SolidBrush(Color.Black)
+
+        Dim x As Integer = 50
+        Dim y As Integer = 50
+        Dim lineHeight As Integer = 20
+        Dim separator As String = "".PadLeft(35, "-"c)
+
+        e.Graphics.DrawString("Firmansyah", font12, brush, x, y)
+        y += lineHeight
+        e.Graphics.DrawString("No.Tlp: 212", font10, brush, x, y)
+        y += lineHeight
+        e.Graphics.DrawString("Jl. Wiro", font10, brush, x, y)
+        y += lineHeight * 2
+
+        e.Graphics.DrawString(separator, font8, brush, x, y)
+        y += lineHeight
+
+        e.Graphics.DrawString("Barang", font10, brush, x, y)
+        e.Graphics.DrawString("Qty", font10, brush, x + 150, y)
+        e.Graphics.DrawString("Total", font10, brush, x + 200, y)
+        y += lineHeight
+
+        e.Graphics.DrawString(separator, font8, brush, x, y)
+        y += lineHeight
+
+        For Each row As DataGridViewRow In dgvTampil.Rows
+            If Not row.IsNewRow Then
+                Dim namaBarang As String = row.Cells(1).Value.ToString()
+                Dim qty As String = row.Cells("Qty").Value.ToString()
+                Dim totalItem As String = row.Cells("Total").Value.ToString()
+
+                e.Graphics.DrawString(namaBarang, font10, brush, x, y)
+                e.Graphics.DrawString(qty, font10, brush, x + 150, y)
+                e.Graphics.DrawString(totalItem, font10, brush, x + 200, y)
+
+                y += lineHeight
+            End If
+        Next
+
+        y += lineHeight
+
+        e.Graphics.DrawString(separator, font8, brush, x, y)
+        y += lineHeight
+
+        e.Graphics.DrawString("Total", font10, brush, x, y)
+        e.Graphics.DrawString(": " & txtTotalHarga.Text, font10, brush, x + 100, y)
+        y += lineHeight
+
+        e.Graphics.DrawString("Tunai", font10, brush, x, y)
+        Dim tunaiValue As Decimal
+        If Decimal.TryParse(txtTunai.Text, tunaiValue) Then
+            e.Graphics.DrawString(": " & String.Format(CURRENCY_FORMAT, tunaiValue), font10, brush, x + 100, y)
+        Else
+            e.Graphics.DrawString(": " & txtTunai.Text, font10, brush, x + 100, y)
+        End If
+        y += lineHeight
+
+        e.Graphics.DrawString("Kembali", font10, brush, x, y)
+        e.Graphics.DrawString(": " & txtKembalian.Text, font10, brush, x + 100, y)
+        y += lineHeight * 2
+
+        e.Graphics.DrawString(separator, font8, brush, x, y)
+        y += lineHeight
+
+        e.Graphics.DrawString("Terimakasih...!!!", font10, brush, x, y)
+
+        font12.Dispose()
+        font10.Dispose()
+        font8.Dispose()
+        brush.Dispose()
+    End Sub
+
+    Private Sub SimpanTransaksiKeluar()
+        Try
+            BukaKoneksi()
+            For Each row As DataGridViewRow In dgvTampil.Rows
+                If row.IsNewRow Then Continue For
+
+                Dim kodeBarang As String = row.Cells("Kode").Value.ToString()
+                Dim namaBarang As String = row.Cells("Barang").Value.ToString()
+                Dim satuan As String = row.Cells("Satuan").Value.ToString()
+                Dim hargaSatuan As Integer = Convert.ToInt32(row.Cells("Harga").Value)
+                Dim qty As Integer = Convert.ToInt32(row.Cells("Qty").Value)
+                Dim total As Integer = Convert.ToInt32(row.Cells("Total").Value)
+                Dim tanggal As Date = Date.Now
+
+                Dim query As String = "INSERT INTO transaksi_keluar (kode_barang, nama_barang, satuan, harga_satuan, qty, total, tanggal) " &
+                                  "VALUES (@kode, @nama, @satuan, @harga, @qty, @total, @tanggal)"
+                Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@kode", kodeBarang)
+                    cmd.Parameters.AddWithValue("@nama", namaBarang)
+                    cmd.Parameters.AddWithValue("@satuan", satuan)
+                    cmd.Parameters.AddWithValue("@harga", hargaSatuan)
+                    cmd.Parameters.AddWithValue("@qty", qty)
+                    cmd.Parameters.AddWithValue("@total", total)
+                    cmd.Parameters.AddWithValue("@tanggal", tanggal)
+                    cmd.ExecuteNonQuery()
+                End Using
+            Next
+        Catch ex As Exception
+            ShowErrorMessage("Gagal menyimpan transaksi keluar: " & ex.Message)
+        Finally
+            conn.Close()
+        End Try
     End Sub
 
     '===============[ Event Handlers - Navigation ]===============

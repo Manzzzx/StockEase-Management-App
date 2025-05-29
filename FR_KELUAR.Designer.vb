@@ -62,6 +62,7 @@ Partial Class FR_KELUAR
         Total = New DataGridViewTextBoxColumn()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         HapusToolStripMenuItem = New ToolStripMenuItem()
+        nota = New Printing.PrintDocument()
         Panel1.SuspendLayout()
         GroupBox3.SuspendLayout()
         GroupBox2.SuspendLayout()
@@ -437,6 +438,9 @@ Partial Class FR_KELUAR
         HapusToolStripMenuItem.Size = New Size(155, 38)
         HapusToolStripMenuItem.Text = "Hapus"
         ' 
+        ' nota
+        ' 
+        ' 
         ' FR_KELUAR
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
@@ -505,4 +509,5 @@ Partial Class FR_KELUAR
     Friend WithEvents Label8 As Label
     Friend WithEvents Label7 As Label
     Friend WithEvents Label6 As Label
+    Friend WithEvents nota As Printing.PrintDocument
 End Class
