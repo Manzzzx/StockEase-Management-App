@@ -70,13 +70,36 @@ Public Class FR_KELUAR
     Private Function ReserveStock(productCode As String, quantity As Integer) As Boolean
         Try
             BukaKoneksi()
-            Dim query As String = "UPDATE transaksi_masuk SET jumlah = jumlah - @qty WHERE kode_barang = @kode AND jumlah >= @qty LIMIT 1"
+            Dim query As String = "SELECT id, jumlah FROM transaksi_masuk WHERE kode_barang = @kode AND jumlah > 0 ORDER BY tanggal_masuk ASC, id ASC"
+            Dim stokList As New List(Of Tuple(Of Integer, Integer))
             Using cmd As New MySqlCommand(query, conn)
-                cmd.Parameters.AddWithValue("@qty", quantity)
                 cmd.Parameters.AddWithValue("@kode", productCode)
-                Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
-                Return rowsAffected > 0
+                Using rd = cmd.ExecuteReader()
+                    While rd.Read()
+                        stokList.Add(Tuple.Create(Convert.ToInt32(rd("id")), Convert.ToInt32(rd("jumlah"))))
+                    End While
+                End Using
             End Using
+
+            Dim sisaQty As Integer = quantity
+            For Each stok In stokList
+                If sisaQty <= 0 Then Exit For
+                Dim ambil As Integer = Math.Min(stok.Item2, sisaQty)
+                Dim updateQuery As String = "UPDATE transaksi_masuk SET jumlah = jumlah - @qty WHERE id = @id"
+                Using updateCmd As New MySqlCommand(updateQuery, conn)
+                    updateCmd.Parameters.AddWithValue("@qty", ambil)
+                    updateCmd.Parameters.AddWithValue("@id", stok.Item1)
+                    updateCmd.ExecuteNonQuery()
+                End Using
+                sisaQty -= ambil
+            Next
+
+            If sisaQty > 0 Then
+                ShowWarningMessage("Stok tidak cukup untuk diambil.")
+                Return False
+            End If
+
+            Return True
         Catch ex As Exception
             ShowErrorMessage("Gagal mereservasi stok: " & ex.Message)
             Return False
@@ -175,7 +198,6 @@ Public Class FR_KELUAR
         Dim productCode As String = row.Cells("Kode").Value.ToString()
         Dim quantity As Integer = Convert.ToInt32(row.Cells("Qty").Value)
 
-        ' Release stock back to database
         If ReleaseStock(productCode, quantity) Then
             dgvTampil.Rows.Remove(row)
             Return True
@@ -380,7 +402,20 @@ Public Class FR_KELUAR
                 adapter.SelectCommand.Parameters.AddWithValue("@cari", $"%{searchTerm}%")
                 Dim dataTable As New DataTable
                 adapter.Fill(dataTable)
+
+                If Not dataTable.Columns.Contains("jumlah") Then
+                    dataTable.Columns.Add("jumlah", GetType(Integer))
+                End If
+
+                For Each row As DataRow In dataTable.Rows
+                    row("jumlah") = GetAvailableStock(row("kode_barang").ToString())
+                Next
+
                 dgvCari.DataSource = dataTable
+                If dgvCari.Columns.Contains("kode_barang") Then dgvCari.Columns("kode_barang").HeaderText = "Kode Barang"
+                If dgvCari.Columns.Contains("nama_barang") Then dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
+                If dgvCari.Columns.Contains("satuan") Then dgvCari.Columns("satuan").HeaderText = "Satuan"
+                If dgvCari.Columns.Contains("jumlah") Then dgvCari.Columns("jumlah").HeaderText = "Jumlah"
             End Using
         Catch ex As Exception
             ShowErrorMessage("Error: " & ex.Message)
@@ -410,7 +445,21 @@ Public Class FR_KELUAR
             Using adapter As New MySqlDataAdapter(query, conn)
                 Dim dataTable As New DataTable
                 adapter.Fill(dataTable)
+
+                If Not dataTable.Columns.Contains("jumlah") Then
+                    dataTable.Columns.Add("jumlah", GetType(Integer))
+                End If
+
+                For Each row As DataRow In dataTable.Rows
+                    row("jumlah") = GetAvailableStock(row("kode_barang").ToString())
+                Next
+
                 dgvCari.DataSource = dataTable
+
+                If dgvCari.Columns.Contains("kode_barang") Then dgvCari.Columns("kode_barang").HeaderText = "Kode Barang"
+                If dgvCari.Columns.Contains("nama_barang") Then dgvCari.Columns("nama_barang").HeaderText = "Nama Barang"
+                If dgvCari.Columns.Contains("satuan") Then dgvCari.Columns("satuan").HeaderText = "Satuan"
+                If dgvCari.Columns.Contains("jumlah") Then dgvCari.Columns("jumlah").HeaderText = "Jumlah"
             End Using
         Catch ex As Exception
             ShowErrorMessage("Error: " & ex.Message)

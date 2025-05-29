@@ -31,12 +31,13 @@ Public Class FR_MASUK
         txtKode.Focus()
     End Sub
 
-    Sub TambahKeGrid(Optional ByVal tanggalMasuk As String = "", Optional ByVal id As Integer = 0)
+    Sub TambahKeGrid(Optional ByVal tanggalMasuk As String = "", Optional ByVal id As Integer = 0, Optional ByVal nomorUrut As Integer = 1)
         If txtKode.Text = "" Or lblBarang.Text = "" Or lblSatuan.Text = "" Or txtJumlah.Text = "" Or txtSuplier.Text = "" Or txtHargaPartai.Text = "" Then
             Exit Sub
         End If
 
         Dim idx As Integer = dgvTampil.Rows.Add()
+        dgvTampil.Rows(idx).Cells("no").Value = nomorUrut
         dgvTampil.Rows(idx).Cells("id").Value = id
         dgvTampil.Rows(idx).Cells("kode_barang").Value = txtKode.Text
         dgvTampil.Rows(idx).Cells("nama_barang").Value = lblBarang.Text
@@ -64,8 +65,10 @@ Public Class FR_MASUK
             Dim dt As New DataTable
             da.Fill(dt)
             dgvTampil.Rows.Clear()
+            Dim nomorUrut As Integer = (currentPage - 1) * pageSize + 1
             For Each row As DataRow In dt.Rows
-                dgvTampil.Rows.Add(row("id"), row("kode_barang"), row("nama_barang"), row("satuan"), row("jumlah"), row("suplier"), row("harga_partai"), row("tanggal_masuk"))
+                dgvTampil.Rows.Add(nomorUrut, row("id"), row("kode_barang"), row("nama_barang"), row("satuan"), row("jumlah"), row("suplier"), row("harga_partai"), row("tanggal_masuk"))
+                nomorUrut += 1
             Next
         Catch ex As Exception
             MsgBox("Gagal load data: " & ex.Message, MsgBoxStyle.Critical)
@@ -75,6 +78,8 @@ Public Class FR_MASUK
 
     Private Sub FR_MASUK_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If dgvTampil.Columns.Count = 0 Then
+            dgvTampil.Columns.Add("no", "No")
+            dgvTampil.Columns("no").Width = 40
             dgvTampil.Columns.Add("id", "ID")
             dgvTampil.Columns.Add("kode_barang", "Kode")
             dgvTampil.Columns.Add("nama_barang", "Nama")
@@ -86,6 +91,7 @@ Public Class FR_MASUK
             dgvTampil.Columns("harga_partai").DefaultCellStyle.Format = "N0"
             dgvTampil.Columns("jumlah").DefaultCellStyle.Format = "N0"
         End If
+        dgvTampil.Columns("id").Visible = False
         TampilTransaksiMasuk()
     End Sub
 
@@ -254,6 +260,12 @@ Public Class FR_MASUK
     End Sub
 
     Private Sub HapusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles HapusToolStripMenuItem.Click
+        ' Pastikan ada baris yang dipilih
+        If dgvTampil.SelectedRows.Count = 0 OrElse dgvTampil.SelectedRows(0).IsNewRow Then
+            MsgBox("Pilih data yang ingin dihapus terlebih dahulu.", MsgBoxStyle.Exclamation)
+            Exit Sub
+        End If
+
         ' Konfirmasi dari pengguna
         If MsgBox("Yakin ingin menghapus data ini?", MsgBoxStyle.Question Or MsgBoxStyle.YesNo) = MsgBoxResult.No Then
             Exit Sub
@@ -261,7 +273,12 @@ Public Class FR_MASUK
 
         Try
             ' Ambil ID dari baris yang dipilih
-            Dim id As Integer = dgvTampil.SelectedRows(0).Cells("id").Value
+            Dim idCell = dgvTampil.SelectedRows(0).Cells("id").Value
+            If idCell Is Nothing OrElse Not Integer.TryParse(idCell.ToString, Nothing) Then
+                MsgBox("Data tidak valid untuk dihapus.", MsgBoxStyle.Exclamation)
+                Exit Sub
+            End If
+            Dim id As Integer = Convert.ToInt32(idCell)
 
             ' Hapus dari database
             BukaKoneksi()
@@ -276,5 +293,12 @@ Public Class FR_MASUK
         Catch ex As Exception
             MsgBox("Gagal menghapus data: " & ex.Message, MsgBoxStyle.Critical)
         End Try
+    End Sub
+
+    Private Sub dgvTampil_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvTampil.CellMouseDown
+        If e.Button = MouseButtons.Right AndAlso e.RowIndex >= 0 Then
+            dgvTampil.ClearSelection()
+            dgvTampil.Rows(e.RowIndex).Selected = True
+        End If
     End Sub
 End Class

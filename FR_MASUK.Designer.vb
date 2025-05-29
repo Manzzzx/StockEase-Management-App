@@ -157,6 +157,7 @@ Partial Class FR_MASUK
         dgvTampil.ReadOnly = True
         dgvTampil.RowHeadersVisible = False
         dgvTampil.RowHeadersWidth = 82
+        dgvTampil.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvTampil.Size = New Size(1619, 1070)
         dgvTampil.TabIndex = 10
         ' 

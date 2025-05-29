@@ -301,7 +301,7 @@ Partial Class FR_KELUAR
         pnCari.Controls.Add(dgvCari)
         pnCari.Controls.Add(btnTutup)
         pnCari.Controls.Add(txtCari)
-        pnCari.Location = New Point(0, 397)
+        pnCari.Location = New Point(2, 731)
         pnCari.Name = "pnCari"
         pnCari.Size = New Size(896, 416)
         pnCari.TabIndex = 3
