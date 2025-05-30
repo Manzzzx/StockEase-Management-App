@@ -506,6 +506,30 @@ Public Class FR_KELUAR
     End Sub
 
     Private Sub btnBayar_Click(sender As Object, e As EventArgs) Handles btnBayar.Click
+        If String.IsNullOrWhiteSpace(txtTunai.Text) Then
+            MessageBox.Show("Silakan masukkan jumlah uang tunai terlebih dahulu!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtTunai.Focus()
+            Return
+        End If
+
+        Dim tunai As Decimal
+        If Not Decimal.TryParse(txtTunai.Text, tunai) Then
+            MessageBox.Show("Jumlah uang tunai harus berupa angka yang valid!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtTunai.Focus()
+            txtTunai.SelectAll()
+            Return
+        End If
+
+        Dim totalBayar As Decimal = Convert.ToDecimal(lblHarga.Text.Replace("Rp", "").Replace(",", "").Trim())
+        If tunai < totalBayar Then
+            MessageBox.Show(
+                $"Jumlah uang tunai tidak mencukupi!{Environment.NewLine}Total: Rp {totalBayar:N0}{Environment.NewLine}Tunai: Rp {tunai:N0}",
+                "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtTunai.Focus()
+            txtTunai.SelectAll()
+            Return
+        End If
+
         SimpanTransaksiKeluar()
         PrintNota()
         dgvTampil.Rows.Clear()
@@ -526,80 +550,161 @@ Public Class FR_KELUAR
     End Sub
 
     Private Sub nota_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles nota.PrintPage
-        Dim font12 As New Font("Courier New", 12, FontStyle.Bold)
-        Dim font10 As New Font("Courier New", 10)
-        Dim font8 As New Font("Courier New", 8)
-        Dim brush As New SolidBrush(Color.Black)
+        Dim fontHeader As New Font("Arial", 16, FontStyle.Bold)
+        Dim fontSubHeader As New Font("Arial", 10, FontStyle.Regular)
+        Dim fontBold As New Font("Arial", 10, FontStyle.Bold)
+        Dim fontNormal As New Font("Arial", 9, FontStyle.Regular)
+        Dim fontSmall As New Font("Arial", 8, FontStyle.Regular)
+
+        Dim blackBrush As New SolidBrush(Color.Black)
+        Dim blueBrush As New SolidBrush(Color.FromArgb(52, 73, 94))
+        Dim grayBrush As New SolidBrush(Color.FromArgb(127, 140, 141))
+        Dim blackPen As New Pen(Color.Black, 1)
+        Dim bluePen As New Pen(Color.FromArgb(52, 152, 219), 2)
 
         Dim x As Integer = 50
         Dim y As Integer = 50
         Dim lineHeight As Integer = 20
-        Dim separator As String = "".PadLeft(35, "-"c)
+        Dim pageWidth As Integer = e.PageBounds.Width - 100
+        Dim leftMargin As Integer = 50
+        Dim rightMargin As Integer = e.PageBounds.Width - 50
 
-        e.Graphics.DrawString("Firmansyah", font12, brush, x, y)
-        y += lineHeight
-        e.Graphics.DrawString("No.Tlp: 212", font10, brush, x, y)
-        y += lineHeight
-        e.Graphics.DrawString("Jl. Wiro", font10, brush, x, y)
-        y += lineHeight * 2
+        Dim headerRect As New Rectangle(x - 10, y - 10, pageWidth + 20, 80)
+        Dim headerBrush As New SolidBrush(Color.FromArgb(240, 243, 244))
+        e.Graphics.FillRectangle(headerBrush, headerRect)
+        e.Graphics.DrawRectangle(bluePen, headerRect)
 
-        e.Graphics.DrawString(separator, font8, brush, x, y)
-        y += lineHeight
+        Dim companyName As String = "Nur Firmansyah Zamani"
+        Dim companySize As SizeF = e.Graphics.MeasureString(companyName, fontHeader)
+        Dim centerX As Single = CSng((pageWidth / 2) - (companySize.Width / 2) + x)
+        e.Graphics.DrawString(companyName, fontHeader, blueBrush, centerX, CSng(y))
+        y += 25
 
-        e.Graphics.DrawString("Barang", font10, brush, x, y)
-        e.Graphics.DrawString("Qty", font10, brush, x + 150, y)
-        e.Graphics.DrawString("Total", font10, brush, x + 200, y)
-        y += lineHeight
+        Dim phoneInfo As String = "No. Tlp: 123"
+        Dim addressInfo As String = "Jl. Jalan"
+        Dim phoneSize As SizeF = e.Graphics.MeasureString(phoneInfo, fontSubHeader)
+        Dim addressSize As SizeF = e.Graphics.MeasureString(addressInfo, fontSubHeader)
 
-        e.Graphics.DrawString(separator, font8, brush, x, y)
-        y += lineHeight
+        e.Graphics.DrawString(phoneInfo, fontSubHeader, grayBrush, CSng((pageWidth / 2) - (phoneSize.Width / 2) + x), CSng(y))
+        y += 15
+        e.Graphics.DrawString(addressInfo, fontSubHeader, grayBrush, CSng((pageWidth / 2) - (addressSize.Width / 2) + x), CSng(y))
+        y += 35
 
+        e.Graphics.DrawString("DETAIL PEMBELIAN", fontBold, blueBrush, CSng(x), CSng(y))
+        e.Graphics.DrawLine(bluePen, CSng(x), CSng(y + 15), CSng(x + 150), CSng(y + 15))
+        y += 30
+
+        Dim tableHeaderRect As New Rectangle(x, y, pageWidth, 25)
+        Dim tableHeaderBrush As New SolidBrush(Color.FromArgb(236, 240, 241))
+        e.Graphics.FillRectangle(tableHeaderBrush, tableHeaderRect)
+        e.Graphics.DrawRectangle(blackPen, tableHeaderRect)
+
+        e.Graphics.DrawString("BARANG", fontBold, blackBrush, CSng(x + 5), CSng(y + 5))
+        e.Graphics.DrawString("QTY", fontBold, blackBrush, CSng(x + 200), CSng(y + 5))
+        e.Graphics.DrawString("TOTAL", fontBold, blackBrush, CSng(x + 270), CSng(y + 5))
+
+        e.Graphics.DrawLine(blackPen, CSng(x + 190), CSng(y), CSng(x + 190), CSng(y + 25))
+        e.Graphics.DrawLine(blackPen, CSng(x + 260), CSng(y), CSng(x + 260), CSng(y + 25))
+
+        y += 25
+
+        Dim rowCount As Integer = 0
         For Each row As DataGridViewRow In dgvTampil.Rows
             If Not row.IsNewRow Then
+                rowCount += 1
+
+                Dim rowRect As New Rectangle(x, y, pageWidth, 20)
+                If rowCount Mod 2 = 0 Then
+                    Dim altRowBrush As New SolidBrush(Color.FromArgb(248, 249, 250))
+                    e.Graphics.FillRectangle(altRowBrush, rowRect)
+                    altRowBrush.Dispose()
+                End If
+
+                e.Graphics.DrawRectangle(blackPen, rowRect)
+
                 Dim namaBarang As String = row.Cells(1).Value.ToString()
                 Dim qty As String = row.Cells("Qty").Value.ToString()
-                Dim totalItem As String = row.Cells("Total").Value.ToString()
+                Dim totalItem As String = FormatCurrency(row.Cells("Total").Value)
 
-                e.Graphics.DrawString(namaBarang, font10, brush, x, y)
-                e.Graphics.DrawString(qty, font10, brush, x + 150, y)
-                e.Graphics.DrawString(totalItem, font10, brush, x + 200, y)
+                e.Graphics.DrawString(namaBarang, fontNormal, blackBrush, CSng(x + 5), CSng(y + 3))
+                e.Graphics.DrawString(qty, fontNormal, blackBrush, CSng(x + 195), CSng(y + 3))
+                e.Graphics.DrawString(totalItem, fontNormal, blackBrush, CSng(x + 265), CSng(y + 3))
 
-                y += lineHeight
+                e.Graphics.DrawLine(blackPen, CSng(x + 190), CSng(y), CSng(x + 190), CSng(y + 20))
+                e.Graphics.DrawLine(blackPen, CSng(x + 260), CSng(y), CSng(x + 260), CSng(y + 20))
+
+                y += 20
             End If
         Next
 
-        y += lineHeight
+        y += 20
 
-        e.Graphics.DrawString(separator, font8, brush, x, y)
-        y += lineHeight
+        Dim summaryRect As New Rectangle(x + 150, y, pageWidth - 150, 80)
+        Dim summaryBrush As New SolidBrush(Color.FromArgb(248, 249, 250))
+        e.Graphics.FillRectangle(summaryBrush, summaryRect)
+        e.Graphics.DrawRectangle(bluePen, summaryRect)
 
-        e.Graphics.DrawString("Total", font10, brush, x, y)
-        e.Graphics.DrawString(": " & txtTotalHarga.Text, font10, brush, x + 100, y)
-        y += lineHeight
+        y += 10
+        e.Graphics.DrawString("RINGKASAN", fontBold, blueBrush, CSng(x + 160), CSng(y))
+        y += 20
 
-        e.Graphics.DrawString("Tunai", font10, brush, x, y)
+        e.Graphics.DrawString("Total:", fontBold, blackBrush, CSng(x + 160), CSng(y))
+        e.Graphics.DrawString(FormatCurrency(txtTotalHarga.Text), fontBold, blackBrush, CSng(x + 250), CSng(y))
+        y += 15
+
+        e.Graphics.DrawString("Tunai:", fontNormal, blackBrush, CSng(x + 160), CSng(y))
         Dim tunaiValue As Decimal
         If Decimal.TryParse(txtTunai.Text, tunaiValue) Then
-            e.Graphics.DrawString(": " & String.Format(CURRENCY_FORMAT, tunaiValue), font10, brush, x + 100, y)
+            e.Graphics.DrawString(FormatCurrency(tunaiValue), fontNormal, blackBrush, CSng(x + 250), CSng(y))
         Else
-            e.Graphics.DrawString(": " & txtTunai.Text, font10, brush, x + 100, y)
+            e.Graphics.DrawString(txtTunai.Text, fontNormal, blackBrush, CSng(x + 250), CSng(y))
         End If
-        y += lineHeight
+        y += 15
 
-        e.Graphics.DrawString("Kembali", font10, brush, x, y)
-        e.Graphics.DrawString(": " & txtKembalian.Text, font10, brush, x + 100, y)
-        y += lineHeight * 2
+        e.Graphics.DrawString("Kembali:", fontNormal, blackBrush, CSng(x + 160), CSng(y))
+        e.Graphics.DrawString(FormatCurrency(txtKembalian.Text), fontNormal, blackBrush, CSng(x + 250), CSng(y))
+        y += 30
 
-        e.Graphics.DrawString(separator, font8, brush, x, y)
-        y += lineHeight
+        Dim dashPen As New Pen(Color.Gray, 1)
+        dashPen.DashStyle = Drawing2D.DashStyle.Dash
+        e.Graphics.DrawLine(dashPen, CSng(x), CSng(y), CSng(rightMargin - 50), CSng(y))
+        y += 20
 
-        e.Graphics.DrawString("Terimakasih...!!!", font10, brush, x, y)
+        Dim thankYouMsg As String = "Terimakasih...!!!"
+        Dim thankYouSize As SizeF = e.Graphics.MeasureString(thankYouMsg, fontBold)
+        Dim greenBrush As New SolidBrush(Color.FromArgb(39, 174, 96))
+        e.Graphics.DrawString(thankYouMsg, fontBold, greenBrush, CSng((pageWidth / 2) - (thankYouSize.Width / 2) + x), CSng(y))
+        y += 20
 
-        font12.Dispose()
-        font10.Dispose()
-        font8.Dispose()
-        brush.Dispose()
+        Dim footerNote As String = "Semoga harimu menyenangkan!"
+        Dim footerSize As SizeF = e.Graphics.MeasureString(footerNote, fontSmall)
+        e.Graphics.DrawString(footerNote, fontSmall, grayBrush, CSng((pageWidth / 2) - (footerSize.Width / 2) + x), CSng(y))
+
+        fontHeader.Dispose()
+        fontSubHeader.Dispose()
+        fontBold.Dispose()
+        fontNormal.Dispose()
+        fontSmall.Dispose()
+        blackBrush.Dispose()
+        blueBrush.Dispose()
+        grayBrush.Dispose()
+        greenBrush.Dispose()
+        blackPen.Dispose()
+        bluePen.Dispose()
+        dashPen.Dispose()
+        headerBrush.Dispose()
+        tableHeaderBrush.Dispose()
+        summaryBrush.Dispose()
     End Sub
+
+    Private Function FormatCurrency(value As Object) As String
+        Try
+            Dim numValue As Decimal = Convert.ToDecimal(value)
+            Return "Rp " & numValue.ToString("N0")
+        Catch
+            Return value.ToString()
+        End Try
+    End Function
 
     Private Sub SimpanTransaksiKeluar()
         Try

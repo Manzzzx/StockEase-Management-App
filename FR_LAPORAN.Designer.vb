@@ -49,12 +49,12 @@ Partial Class FR_LAPORAN
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(2138, 92)
+        Panel1.Size = New Size(1909, 92)
         Panel1.TabIndex = 0
         ' 
         ' btnCetak
         ' 
-        btnCetak.Location = New Point(1871, 24)
+        btnCetak.Location = New Point(1703, 26)
         btnCetak.Name = "btnCetak"
         btnCetak.Size = New Size(150, 46)
         btnCetak.TabIndex = 7
@@ -63,7 +63,7 @@ Partial Class FR_LAPORAN
         ' 
         ' btnTampil
         ' 
-        btnTampil.Location = New Point(1675, 24)
+        btnTampil.Location = New Point(1514, 27)
         btnTampil.Name = "btnTampil"
         btnTampil.Size = New Size(150, 46)
         btnTampil.TabIndex = 6
@@ -73,7 +73,7 @@ Partial Class FR_LAPORAN
         ' tglSampai
         ' 
         tglSampai.Format = DateTimePickerFormat.Short
-        tglSampai.Location = New Point(1284, 28)
+        tglSampai.Location = New Point(1208, 27)
         tglSampai.Name = "tglSampai"
         tglSampai.Size = New Size(226, 39)
         tglSampai.TabIndex = 5
@@ -81,7 +81,7 @@ Partial Class FR_LAPORAN
         ' tglMulai
         ' 
         tglMulai.Format = DateTimePickerFormat.Short
-        tglMulai.Location = New Point(828, 28)
+        tglMulai.Location = New Point(752, 27)
         tglMulai.Name = "tglMulai"
         tglMulai.Size = New Size(208, 39)
         tglMulai.TabIndex = 4
@@ -89,7 +89,7 @@ Partial Class FR_LAPORAN
         ' Label3
         ' 
         Label3.AutoSize = True
-        Label3.Location = New Point(1097, 31)
+        Label3.Location = New Point(1021, 30)
         Label3.Name = "Label3"
         Label3.Size = New Size(181, 32)
         Label3.TabIndex = 3
@@ -98,7 +98,7 @@ Partial Class FR_LAPORAN
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Location = New Point(659, 31)
+        Label2.Location = New Point(583, 30)
         Label2.Name = "Label2"
         Label2.Size = New Size(163, 32)
         Label2.TabIndex = 2
@@ -107,7 +107,7 @@ Partial Class FR_LAPORAN
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(25, 31)
+        Label1.Location = New Point(25, 30)
         Label1.Name = "Label1"
         Label1.Size = New Size(158, 32)
         Label1.TabIndex = 1
@@ -118,7 +118,7 @@ Partial Class FR_LAPORAN
         cbLaporan.DropDownStyle = ComboBoxStyle.DropDownList
         cbLaporan.FormattingEnabled = True
         cbLaporan.Items.AddRange(New Object() {"Laporan Barang Masuk", "Laporan Barang Keluar"})
-        cbLaporan.Location = New Point(210, 27)
+        cbLaporan.Location = New Point(210, 26)
         cbLaporan.Name = "cbLaporan"
         cbLaporan.Size = New Size(285, 40)
         cbLaporan.TabIndex = 0
@@ -137,14 +137,14 @@ Partial Class FR_LAPORAN
         dgvtampil.Name = "dgvtampil"
         dgvtampil.RowHeadersVisible = False
         dgvtampil.RowHeadersWidth = 82
-        dgvtampil.Size = New Size(2138, 1213)
+        dgvtampil.Size = New Size(1909, 1152)
         dgvtampil.TabIndex = 1
         ' 
         ' FR_LAPORAN
         ' 
-        AutoScaleDimensions = New SizeF(13.0F, 32.0F)
+        AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(2138, 1305)
+        ClientSize = New Size(1909, 1244)
         Controls.Add(dgvtampil)
         Controls.Add(Panel1)
         Name = "FR_LAPORAN"
