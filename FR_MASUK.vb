@@ -434,7 +434,6 @@ Public Class FR_MASUK
 #End Region
 End Class
 
-' Helper class untuk validasi
 Public Class ValidationResult
     Public Property IsValid As Boolean
     Public Property Message As String
