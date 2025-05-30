@@ -20,7 +20,7 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 - **Manajemen Barang:**
   - Tambah, edit, dan hapus data barang.
 
-- - **Transaksi Barang Masuk:**
+- **Transaksi Barang Masuk:**
   - Input barang masuk, supplier, harga partai, dan jumlah.
   - Pencarian barang.
   - Paging data transaksi masuk.
@@ -38,16 +38,16 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 - **Notifikasi Stok Minimum:**
   - Peringatan otomatis jika stok barang di bawah batas minimum.
 
-- - **Print:**
+- **Print:**
   - Print data transaksi ke printer.
 
-- - **Laporan:**
+- **Laporan:**
   - Lihat dan cetak laporan transaksi.
 
-- - **Tentang Aplikasi:**
+- **Tentang Aplikasi:**
   - Informasi mengenai aplikasi.
 
-- - - **Logout & Exit:**
+- **Logout & Exit:**
   - Fitur keluar dari aplikasi dan logout akun.
 
 
