@@ -5,7 +5,6 @@ Public Class FR_KELUAR
     Private Const DEFAULT_KODE_PREFIX As String = "BRG0"
     Private Const CURRENCY_FORMAT As String = "Rp {0:N0}"
 
-    '===============[ Form Events ]===============
     Private Sub FR_KELUAR_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         InitializeEventHandlers()
         ResetProductInput()
@@ -17,7 +16,6 @@ Public Class FR_KELUAR
         AddHandler dgvTampil.EditingControlShowing, AddressOf dgvTampil_EditingControlShowing
     End Sub
 
-    '===============[ Helper Methods - UI Management ]===============
     Private Sub ClearProductInputs()
         txtBarang.Clear()
         txtSatuan.Clear()
@@ -44,7 +42,6 @@ Public Class FR_KELUAR
             .Sum(Function(r) Convert.ToDecimal(r.Cells("Total").Value))
     End Function
 
-    '===============[ Stock Management ]===============
     Private Function GetAvailableStock(productCode As String) As Integer
         Dim stockIn As Integer = GetStockFromDatabase("transaksi_masuk", "jumlah", productCode)
         Dim stockOut As Integer = GetStockFromDatabase("transaksi_keluar", "qty", productCode)
@@ -127,7 +124,6 @@ Public Class FR_KELUAR
         End Try
     End Function
 
-    '===============[ Product Data Management ]===============
     Private Sub LoadProductData(productCode As String)
         If String.IsNullOrWhiteSpace(productCode) Then
             ClearProductInputs()
@@ -160,7 +156,6 @@ Public Class FR_KELUAR
         txtHarga.Text = reader("harga_satuan").ToString()
     End Sub
 
-    '===============[ Grid Management ]===============
     Private Function AddOrUpdateProductInGrid(quantity As Integer, price As Decimal) As Boolean
         Dim productCode As String = txtKode.Text.Trim
         Dim existingRow As DataGridViewRow = FindProductInGrid(productCode)
@@ -208,7 +203,6 @@ Public Class FR_KELUAR
         End If
     End Function
 
-    '===============[ Validation ]===============
     Private Function IsValidProductInput() As Boolean
         If String.IsNullOrWhiteSpace(txtKode.Text) OrElse String.IsNullOrWhiteSpace(txtBarang.Text) Then
             ShowWarningMessage("Lengkapi data terlebih dahulu.")
@@ -236,7 +230,6 @@ Public Class FR_KELUAR
         Return True
     End Function
 
-    '===============[ Event Handlers - Product Input ]===============
     Private Sub txtKode_TextChanged(sender As Object, e As EventArgs) Handles txtKode.TextChanged
         LoadProductData(txtKode.Text)
     End Sub
@@ -260,7 +253,6 @@ Public Class FR_KELUAR
         End If
     End Sub
 
-    '===============[ Event Handlers - Grid Editing ]===============
     Private Sub dgvTampil_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs)
         If dgvTampil.Columns(e.ColumnIndex).Name <> "Qty" Then Return
         ValidateAndUpdateGridRow(e.RowIndex)
@@ -328,7 +320,6 @@ Public Class FR_KELUAR
         End If
     End Sub
 
-    '===============[ Event Handlers - Context Menu ]===============
     Private Sub HapusToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles HapusToolStripMenuItem.Click
         If Not HasSelectedRow() Then
             ShowInfoMessage("Pilih baris yang ingin dihapus terlebih dahulu.")
@@ -371,7 +362,6 @@ Public Class FR_KELUAR
         dgvTampil.Rows(rowIndex).Selected = True
     End Sub
 
-    '===============[ Event Handlers - Search Panel ]===============
     Private Sub btnCari_Click(sender As Object, e As EventArgs) Handles btnCari.Click
         ShowSearchPanel()
     End Sub
@@ -467,7 +457,6 @@ Public Class FR_KELUAR
         End Try
     End Sub
 
-    '===============[ Event Handlers - Payment ]===============
     Private Sub txtTunai_TextChanged(sender As Object, e As EventArgs) Handles txtTunai.TextChanged
         CalculateChange()
     End Sub
@@ -740,7 +729,6 @@ Public Class FR_KELUAR
         End Try
     End Sub
 
-    '===============[ Event Handlers - Navigation ]===============
     Private Sub btnMenu_Click(sender As Object, e As EventArgs) Handles btnMenu.Click
         NavigateToMenu()
     End Sub
@@ -755,7 +743,6 @@ Public Class FR_KELUAR
         Me.WindowState = FormWindowState.Minimized
     End Sub
 
-    '===============[ Message Helpers ]===============
     Private Sub ShowErrorMessage(message As String)
         MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
     End Sub

@@ -32,6 +32,7 @@ Partial Class FR_LAPORAN
         Label1 = New Label()
         cbLaporan = New ComboBox()
         dgvtampil = New DataGridView()
+        laporan = New Printing.PrintDocument()
         Panel1.SuspendLayout()
         CType(dgvtampil, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -127,8 +128,6 @@ Partial Class FR_LAPORAN
         ' 
         dgvtampil.AllowUserToAddRows = False
         dgvtampil.AllowUserToDeleteRows = False
-        dgvtampil.AllowUserToResizeColumns = False
-        dgvtampil.AllowUserToResizeRows = False
         dgvtampil.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvtampil.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvtampil.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
@@ -165,4 +164,5 @@ Partial Class FR_LAPORAN
     Friend WithEvents Label3 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents btnCetak As Button
+    Friend WithEvents laporan As Printing.PrintDocument
 End Class
