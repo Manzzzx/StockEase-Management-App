@@ -42,6 +42,7 @@ Partial Class FR_MENU
         ToolStripSeparator1 = New ToolStripSeparator()
         ToolStripLabelUser = New ToolStripLabel()
         WAKTU = New Timer(components)
+        PengaturanToolStripMenuItem = New ToolStripMenuItem()
         MenuStrip1.SuspendLayout()
         ToolStrip1.SuspendLayout()
         SuspendLayout()
@@ -49,10 +50,10 @@ Partial Class FR_MENU
         ' MenuStrip1
         ' 
         MenuStrip1.ImageScalingSize = New Size(32, 32)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {FileToolStripMenuItem, DatabaseToolStripMenuItem, TransaksiToolStripMenuItem, mnLaporan, mnTentang})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {FileToolStripMenuItem, DatabaseToolStripMenuItem, TransaksiToolStripMenuItem, mnLaporan, PengaturanToolStripMenuItem, mnTentang})
         MenuStrip1.Location = New Point(0, 0)
         MenuStrip1.Name = "MenuStrip1"
-        MenuStrip1.Size = New Size(800, 40)
+        MenuStrip1.Size = New Size(830, 42)
         MenuStrip1.TabIndex = 1
         MenuStrip1.Text = "MenuStrip1"
         ' 
@@ -60,7 +61,7 @@ Partial Class FR_MENU
         ' 
         FileToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnLogout, mnExit})
         FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        FileToolStripMenuItem.Size = New Size(110, 36)
+        FileToolStripMenuItem.Size = New Size(110, 38)
         FileToolStripMenuItem.Text = "System"
         ' 
         ' mnLogout
@@ -79,7 +80,7 @@ Partial Class FR_MENU
         ' 
         DatabaseToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnKaryawan, mnBarang})
         DatabaseToolStripMenuItem.Name = "DatabaseToolStripMenuItem"
-        DatabaseToolStripMenuItem.Size = New Size(132, 36)
+        DatabaseToolStripMenuItem.Size = New Size(132, 38)
         DatabaseToolStripMenuItem.Text = "Database"
         ' 
         ' mnKaryawan
@@ -98,7 +99,7 @@ Partial Class FR_MENU
         ' 
         TransaksiToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnBarangMasuk, mnBarangKeluar})
         TransaksiToolStripMenuItem.Name = "TransaksiToolStripMenuItem"
-        TransaksiToolStripMenuItem.Size = New Size(129, 36)
+        TransaksiToolStripMenuItem.Size = New Size(129, 38)
         TransaksiToolStripMenuItem.Text = "Transaksi"
         ' 
         ' mnBarangMasuk
@@ -116,22 +117,22 @@ Partial Class FR_MENU
         ' mnLaporan
         ' 
         mnLaporan.Name = "mnLaporan"
-        mnLaporan.Size = New Size(119, 36)
+        mnLaporan.Size = New Size(119, 38)
         mnLaporan.Text = "Laporan"
         ' 
         ' mnTentang
         ' 
         mnTentang.Name = "mnTentang"
-        mnTentang.Size = New Size(120, 36)
+        mnTentang.Size = New Size(120, 38)
         mnTentang.Text = "Tentang"
         ' 
         ' ToolStrip1
         ' 
         ToolStrip1.ImageScalingSize = New Size(32, 32)
         ToolStrip1.Items.AddRange(New ToolStripItem() {txtTanggal, ToolStripSeparator2, txtWaktu, ToolStripSeparator1, ToolStripLabelUser})
-        ToolStrip1.Location = New Point(0, 40)
+        ToolStrip1.Location = New Point(0, 42)
         ToolStrip1.Name = "ToolStrip1"
-        ToolStrip1.Size = New Size(800, 38)
+        ToolStrip1.Size = New Size(830, 38)
         ToolStrip1.TabIndex = 3
         ToolStrip1.Text = "ToolStrip1"
         ' 
@@ -166,11 +167,17 @@ Partial Class FR_MENU
         ' WAKTU
         ' 
         ' 
+        ' PengaturanToolStripMenuItem
+        ' 
+        PengaturanToolStripMenuItem.Name = "PengaturanToolStripMenuItem"
+        PengaturanToolStripMenuItem.Size = New Size(155, 38)
+        PengaturanToolStripMenuItem.Text = "Pengaturan"
+        ' 
         ' FR_MENU
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(800, 450)
+        ClientSize = New Size(830, 475)
         Controls.Add(ToolStrip1)
         Controls.Add(MenuStrip1)
         FormBorderStyle = FormBorderStyle.None
@@ -206,5 +213,6 @@ Partial Class FR_MENU
     Friend WithEvents WAKTU As Timer
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ToolStripLabelUser As ToolStripLabel
+    Friend WithEvents PengaturanToolStripMenuItem As ToolStripMenuItem
 
 End Class

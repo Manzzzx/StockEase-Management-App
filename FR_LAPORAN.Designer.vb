@@ -139,6 +139,9 @@ Partial Class FR_LAPORAN
         dgvtampil.Size = New Size(1909, 1152)
         dgvtampil.TabIndex = 1
         ' 
+        ' laporan
+        ' 
+        ' 
         ' FR_LAPORAN
         ' 
         AutoScaleDimensions = New SizeF(13F, 32F)

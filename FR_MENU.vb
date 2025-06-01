@@ -48,6 +48,10 @@
         BukaForm(FR_LAPORAN)
     End Sub
 
+    Private Sub PengaturanToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PengaturanToolStripMenuItem.Click
+        BukaForm(FR_PENGATURAN)
+    End Sub
+
     Private Sub mnTentang_Click(sender As Object, e As EventArgs) Handles mnTentang.Click
         BukaForm(FR_TENTANG)
     End Sub
@@ -63,5 +67,4 @@
         txtTanggal.Text = FormatDateTime(Date.Now, DateFormat.LongDate)
         txtWaktu.Text = TimeOfDay.ToString("HH:mm:ss")
     End Sub
-
 End Class
