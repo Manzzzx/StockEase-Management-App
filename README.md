@@ -66,7 +66,7 @@ Aplikasi ini merupakan sistem manajemen inventaris berbasis Windows Forms (VB.NE
 ```sql
 CREATE DATABASE vbnet_managementapp;
 
-USE vbnet_projectuas;
+USE vbnet_managementapp;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,7 +78,7 @@ CREATE TABLE users (
 ### Karyawan
 
 ```sql
-USE vbnet_projectuas;
+USE vbnet_managementapp;
 
 CREATE TABLE karyawan (
     nik VARCHAR(20) PRIMARY KEY,
@@ -161,4 +161,4 @@ Silakan buat pull request atau issue untuk perbaikan dan pengembangan fitur.
 ---
 
 **Catatan:**  
-Aplikasi ini dikembangkan menggunakan Visual Basic .NET dan Windows Forms. Pastikan .NET Framework yang sesuai sudah terpasang di komputer.
+Aplikasi ini dikembangkan menggunakan Visual Basic .NET dan Windows Forms. Pastikan .NET Framework yang sesuai sudah terpasang di komputermu.
