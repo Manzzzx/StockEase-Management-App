@@ -247,39 +247,93 @@ Public Class FR_LAPORAN
 
             Dim minDate As Date = Date.Today.AddYears(-1)
             Dim maxDate As Date = Date.Today
+            Dim hasData As Boolean = False
 
-            cmd = New MySqlCommand("SELECT MIN(tanggal_masuk), MAX(tanggal_masuk) FROM transaksi_masuk", conn)
+            ' Cek data dari transaksi_masuk
+            cmd = New MySqlCommand("SELECT MIN(tanggal_masuk), MAX(tanggal_masuk) FROM transaksi_masuk WHERE tanggal_masuk IS NOT NULL", conn)
             dr = cmd.ExecuteReader()
             If dr.Read() Then
-                If Not IsDBNull(dr(0)) Then minDate = dr.GetDateTime(0)
-                If Not IsDBNull(dr(1)) Then maxDate = dr.GetDateTime(1)
-            End If
-            dr.Close()
-
-            cmd = New MySqlCommand("SELECT MIN(tanggal), MAX(tanggal) FROM transaksi_keluar", conn)
-            dr = cmd.ExecuteReader()
-            If dr.Read() Then
-                If Not IsDBNull(dr(0)) AndAlso dr.GetDateTime(0) < minDate Then
+                If Not IsDBNull(dr(0)) Then
                     minDate = dr.GetDateTime(0)
+                    hasData = True
                 End If
-                If Not IsDBNull(dr(1)) AndAlso dr.GetDateTime(1) > maxDate Then
+                If Not IsDBNull(dr(1)) Then
                     maxDate = dr.GetDateTime(1)
+                    hasData = True
                 End If
             End If
             dr.Close()
 
+            ' Cek data dari transaksi_keluar
+            cmd = New MySqlCommand("SELECT MIN(tanggal), MAX(tanggal) FROM transaksi_keluar WHERE tanggal IS NOT NULL", conn)
+            dr = cmd.ExecuteReader()
+            If dr.Read() Then
+                If Not IsDBNull(dr(0)) Then
+                    If hasData Then
+                        If dr.GetDateTime(0) < minDate Then minDate = dr.GetDateTime(0)
+                    Else
+                        minDate = dr.GetDateTime(0)
+                        hasData = True
+                    End If
+                End If
+                If Not IsDBNull(dr(1)) Then
+                    If hasData Then
+                        If dr.GetDateTime(1) > maxDate Then maxDate = dr.GetDateTime(1)
+                    Else
+                        maxDate = dr.GetDateTime(1)
+                        hasData = True
+                    End If
+                End If
+            End If
+            dr.Close()
+
+            ' Jika tidak ada data sama sekali, gunakan range default yang lebih fleksibel
+            If Not hasData Then
+                minDate = New Date(2020, 1, 1) ' Set tahun awal yang lebih jauh
+                maxDate = Date.Today.AddYears(1) ' Izinkan sampai tahun depan
+            End If
+
+            ' Set MinDate dan MaxDate terlebih dahulu
             tglMulai.MinDate = minDate
             tglMulai.MaxDate = maxDate
             tglSampai.MinDate = minDate
             tglSampai.MaxDate = maxDate
 
-            tglMulai.Value = New Date(Date.Today.Year, Date.Today.Month, 1)
-            tglSampai.Value = Date.Today
+            ' Tentukan nilai default yang aman
+            Dim defaultStartDate As Date = New Date(Date.Today.Year, Date.Today.Month, 1)
+            Dim defaultEndDate As Date = Date.Today
+
+            ' Pastikan nilai default berada dalam range yang valid
+            If defaultStartDate < minDate Then
+                defaultStartDate = minDate
+            ElseIf defaultStartDate > maxDate Then
+                defaultStartDate = maxDate
+            End If
+
+            If defaultEndDate < minDate Then
+                defaultEndDate = minDate
+            ElseIf defaultEndDate > maxDate Then
+                defaultEndDate = maxDate
+            End If
+
+            ' Set nilai dengan aman
+            tglMulai.Value = defaultStartDate
+            tglSampai.Value = defaultEndDate
 
         Catch ex As Exception
             MessageBox.Show("Gagal mengatur range tanggal: " & ex.Message)
-            tglMulai.Value = Date.Today.AddMonths(-1)
-            tglSampai.Value = Date.Today
+            ' Fallback: Set range yang sangat luas
+            Try
+                tglMulai.MinDate = New Date(2020, 1, 1)
+                tglMulai.MaxDate = Date.Today.AddYears(1)
+                tglSampai.MinDate = New Date(2020, 1, 1)
+                tglSampai.MaxDate = Date.Today.AddYears(1)
+
+                tglMulai.Value = Date.Today.AddMonths(-1)
+                tglSampai.Value = Date.Today
+            Catch innerEx As Exception
+                MessageBox.Show("Error critical pada pengaturan tanggal: " & innerEx.Message)
+            End Try
         Finally
             If conn.State = ConnectionState.Open Then conn.Close()
         End Try
